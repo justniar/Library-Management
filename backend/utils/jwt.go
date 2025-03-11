@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"errors"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,4 +27,28 @@ func GenerateToken(UserID int) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte("SECRET_KEY"))
+}
+
+func ValidateToken(c *gin.Context) (int, error) {
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		return 0, errors.New("missing token")
+	}
+
+	tokenString = strings.TrimPrefix(tokenString, "Bearer")
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		return []byte("SECRET_KEY"), nil
+	})
+
+	if err != nil || !token.Valid {
+		return 0, errors.New("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return 0, errors.New("invalid claims")
+	}
+
+	userID := int(claims["user_id"].(float64))
+	return userID, nil
 }
