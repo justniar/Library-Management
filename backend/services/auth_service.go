@@ -1,6 +1,7 @@
 package services
 
 import (
+	"backend/models"
 	"backend/repositories"
 	"backend/utils"
 	"errors"
@@ -14,7 +15,7 @@ func NewAuthService(r *repositories.Repository) *AuthService {
 	return &AuthService{Repo: r}
 }
 
-func (s *AuthService) Register(user models.user) error {
+func (s *AuthService) Register(user models.User) error {
 	hashedPassword, err := utils.HashPassword(user.PasswordHash)
 	if err != nil {
 		return err

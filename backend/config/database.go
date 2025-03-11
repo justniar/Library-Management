@@ -3,41 +3,34 @@ package config
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 )
 
-func SetUpDatabaseConnection() *sql.DB {
-	if os.Getenv("APP_ENV") != constants.ENUM_RUN_PRODUCTION {
-		if err := godotenv.Load(".env"); err != nil {
-			panic(err)
-		}
-	}
+var DB *sql.DB
 
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASS")
-	dbHost := os.Getenv("DB_HOST")
-	dbName := os.Getenv("DB_NAME")
-	dbPort := os.Getenv("DB_PORT")
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		dbHost, dbUser, dbPass, dbName, dbPort)
-
-	db, err := sql.Open("postgres", dsn)
+func InitDB() {
+	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		log.Fatal("Error loading .env file")
 	}
 
-	if err := db.Ping(); err != nil {
-		panic(err)
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASS"),
+		os.Getenv("DB_NAME"), os.Getenv("DB_PORT"),
+	)
+
+	DB, err = sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal("Database connection error:", err)
 	}
 
-	return db
-}
-
-func CloseDatabaseConnection(db *sql.DB) {
-	if err := db.Close(); err != nil {
-		panic(err)
+	if err = DB.Ping(); err != nil {
+		log.Fatal("Database ping error:", err)
 	}
+
+	fmt.Println("Database connected successfully!")
 }
