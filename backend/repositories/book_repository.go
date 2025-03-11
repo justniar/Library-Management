@@ -46,18 +46,23 @@ func (r *BookRepository) BorrowBook(userID, bookID int) error {
 		}
 		return err
 	}
-	for i, book := range books {
-		if book.ID == bookID {
-			if book.Stock > 0 {
-				books[i].Stock--
-				return nil
-			}
-			return errors.New("book is out of stock")
-		}
+	if stock <= 0 {
+		return errors.New("book is out of stock")
 	}
-	return errors.New("book not found")
+
+	_, err = r.DB.Exec("UPDATE books SET stock = stock - 1 WHERE id=?", bookID)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.DB.Exec("INSERT INTO borrow_history(user_id, book_id, borrow_date, status) VALUES (?, ?, NOW(), 'borrowed')", userID, bookID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (r *BookRepository) ReturnBook() ([]models.Book, error) {
+// func (r *BookRepository) ReturnBook() ([]models.Book, error) {
 
-}
+// }
