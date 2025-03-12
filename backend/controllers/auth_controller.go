@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// var userRepo = repositories.NewUserRepository(config.DB)
-var authService = services.NewAuthService(repositories.NewUserRepository(config.DB))
+var userRepo = repositories.NewUserRepository(config.DB)
+var authService = services.NewAuthService(userRepo)
 
 func Register(c *gin.Context) {
 	var user models.User
