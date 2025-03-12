@@ -1,3 +1,4 @@
+import Hero from "@/components/organism/carrousel/Hero";
 import Navbar from "@/components/organism/navbar/Navbar";
 import Sidebar from "@/components/organism/sidebar/Sidebar";
 
@@ -10,8 +11,7 @@ export default function Home() {
       <Sidebar/>
       <div className="w-full flex flex-col z-0">
         <Navbar username={loggedInUser}/>
-        <h1 className="m-1.5 text-red-900">Welcome to the Library {loggedInUser}!</h1>
-
+        <Hero/>
       </div>
       
     </div>
