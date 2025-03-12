@@ -1,12 +1,10 @@
 "use client";
 import CardBook from "@/components/organism/book/CardBook";
 import Hero from "@/components/organism/carrousel/Hero";
-import Navbar from "@/components/organism/navbar/Navbar";
 import Sidebar from "@/components/organism/sidebar/Sidebar";
 import { BookProps } from "@/utils/types";
 
 export default function Home() {
-  const loggedInUser = "Salsabila"
   const books : BookProps[] = [
     {
         id: 1,
@@ -26,11 +24,7 @@ export default function Home() {
       },
   ]
   return (
-    <>
-    <div className="flex">
-      <Sidebar/>
       <div className="w-full flex flex-col z-0">
-        <Navbar username={loggedInUser}/>
         <Hero/>
         <div className="flex gap-4 m-4">
             {books.map((book)=>(
@@ -45,8 +39,5 @@ export default function Home() {
             ))}
         </div>
       </div>
-      
-    </div>
-    </>
   );
 }
