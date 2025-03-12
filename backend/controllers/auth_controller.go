@@ -5,6 +5,7 @@ import (
 	"backend/models"
 	"backend/repositories"
 	"backend/services"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,7 @@ func Register(c *gin.Context) {
 
 	err := authService.Register(user)
 	if err != nil {
+		fmt.Println("Error:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Registration Failed"})
 		return
 	}

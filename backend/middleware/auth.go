@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"backend/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,7 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userID, err := utils.ValidateToken(c)
+		userID, role, err := utils.ValidateToken(c)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
@@ -16,6 +17,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("user_id", userID)
+		c.Set("role", role)
 		c.Next()
 	}
 }

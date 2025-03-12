@@ -10,6 +10,7 @@ type User struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updates_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
+	Role         string    `json:"role"`
 }
 
 type Book struct {

@@ -8,10 +8,10 @@ import (
 )
 
 type AuthService struct {
-	Repo *repositories.Repository
+	Repo *repositories.UserRepository
 }
 
-func NewAuthService(r *repositories.Repository) *AuthService {
+func NewAuthService(r *repositories.UserRepository) *AuthService {
 	return &AuthService{Repo: r}
 }
 
@@ -21,6 +21,7 @@ func (s *AuthService) Register(user models.User) error {
 		return err
 	}
 	user.PasswordHash = hashedPassword
+	user.Role = "user"
 	return s.Repo.RegisterUser(user)
 }
 

@@ -29,10 +29,10 @@ func GenerateToken(UserID int) (string, error) {
 	return token.SignedString([]byte("SECRET_KEY"))
 }
 
-func ValidateToken(c *gin.Context) (int, error) {
+func ValidateToken(c *gin.Context) (int, string, error) {
 	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
-		return 0, errors.New("missing token")
+		return 0, "", errors.New("missing token")
 	}
 
 	tokenString = strings.TrimPrefix(tokenString, "Bearer")
@@ -41,14 +41,15 @@ func ValidateToken(c *gin.Context) (int, error) {
 	})
 
 	if err != nil || !token.Valid {
-		return 0, errors.New("invalid token")
+		return 0, "", errors.New("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, errors.New("invalid claims")
+		return 0, "", errors.New("invalid claims")
 	}
 
 	userID := int(claims["user_id"].(float64))
-	return userID, nil
+	role := claims["role"].(string)
+	return userID, role, nil
 }
