@@ -26,7 +26,7 @@ const HistoryPage = () => {
       <div className="bg-white shadow-md rounded-lg p-4">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-red-900 text-amber-50">
               <th className="p-3 text-left">Title</th>
               <th className="p-3 text-left">Borrower</th>
               <th className="p-3 text-left">Borrowed Date</th>
@@ -40,19 +40,19 @@ const HistoryPage = () => {
                 <td className="p-3">{book.title}</td>
                 <td className="p-3">{book.borrower}</td>
                 <td className="p-3">{book.borrowedDate}</td>
-                <td className={`p-3 ${book.status === "Borrowed" ? "text-red-600" : "text-green-600"}`}>
+                <td className={`p-3 ${book.status === "Borrowed" ? "text-red-900" : "text-green-900"}`}>
                   {book.status}
                 </td>
                 <td className="p-3 text-center">
                   {book.status === "Borrowed" ? (
                     <button
                       onClick={() => handleReturn(book.id)}
-                      className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+                      className="bg-red-900 text-white px-4 py-1 rounded hover:bg-red-800"
                     >
                       Return
                     </button>
                   ) : (
-                    <span className="text-gray-500">Returned</span>
+                    <span className="text-gray-400">Returned</span>
                   )}
                 </td>
               </tr>
