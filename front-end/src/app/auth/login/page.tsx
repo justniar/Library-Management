@@ -33,7 +33,7 @@ const LoginPage = () => {
           <h2 className="text-3xl font-bold text-center">Login</h2>
           <form onSubmit={handleSubmit} className="mt-6">
             <div>
-              <label className="block font-medium">Email</label>
+              <label className="block font-medium">Username</label>
               <input
                 type="username"
                 className="w-full mt-2 px-3 py-2 border rounded-md"
