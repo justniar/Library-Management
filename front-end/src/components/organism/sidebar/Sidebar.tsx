@@ -8,7 +8,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="flex">
+    <div className="flex z-10 shadow-md">
       <div className={`h-screen ${isOpen ? "w-64" : "w-20"} bg-amber-50 text-red-900 p-5 transition-all duration-300`}>
         <button onClick={() => setIsOpen(!isOpen)} className="text-red-900 p-2 focus:outline-none cursor-pointer">
           <FaBars className="w-6 h-6" />
