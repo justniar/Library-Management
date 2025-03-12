@@ -1,7 +1,6 @@
 "use client";
 import CardBook from "@/components/organism/book/CardBook";
 import Hero from "@/components/organism/carrousel/Hero";
-import Sidebar from "@/components/organism/sidebar/Sidebar";
 import { BookProps } from "@/utils/types";
 
 export default function Home() {
