@@ -15,6 +15,8 @@ export interface BorrowedBook {
     author: string;
     category: string;
     image_url: string;
+    description: string;
+    synopsis: string;
     borrowedDate: string;
     returnDate?: string | null;
     status: string;
