@@ -7,15 +7,14 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	ID           int       `json:"id"`
-	Username     string    `json:"username"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"-"`
-	Role         string    `json:role"`
-	CreatedAt    time.Time `json:"created_at,now()"`
-	UpdatedAt    time.Time `json:"updates_at,omitempty"`
-	DeletedAt    time.Time `json:"deleted_at,omitempty"`
+	ID           uint           `gorm:"primaryKey" json:"id"`
+	Username     string         `gorm:"unique;not null" json:"username"`
+	Email        string         `gorm:"unique;not null" json:"email"`
+	PasswordHash string         `json:"-"`
+	Role         string         `gorm:"type:varchar(20);default:'user'" json:"role"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	DeletedAt    gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 }
 
 type Book struct {
