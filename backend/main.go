@@ -2,20 +2,24 @@ package main
 
 import (
 	"backend/config"
-	"backend/routes"
-	"net/http"
+	"backend/handler"
+	"backend/repositories"
+	service "backend/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	config.InitDB()
-	router := gin.Default()
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "pong"})
-	})
+	userRepo := repositories.NewUserRepository(config.DB)
+	authService := service.NewAuthService(userRepo)
+	authHandler := handler.NewAuthHandler(authService)
 
-	routes.SetupRoutes(router)
-	router.Run(":8080")
+	r := gin.Default()
+
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
+
+	r.Run(":8080")
 }

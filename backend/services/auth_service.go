@@ -1,48 +1,52 @@
-package services
+package service
 
 import (
 	"backend/models"
 	"backend/repositories"
-	"backend/utils"
+	"backend/utils/hash"
+	"backend/utils/jwt"
 	"errors"
-	"fmt"
 )
 
 type AuthService struct {
-	Repo *repositories.UserRepository
+	UserRepo *repositories.UserRepository
 }
 
-func NewAuthService(r *repositories.UserRepository) *AuthService {
-	return &AuthService{Repo: r}
+func NewAuthService(userRepo *repositories.UserRepository) *AuthService {
+	return &AuthService{UserRepo: userRepo}
 }
 
-func (s *AuthService) Register(user models.User) error {
-	fmt.Println("Received User:", user)
-	hashedPassword, err := utils.HashPassword(user.PasswordHash)
+func (s *AuthService) Register(username, email, password, role string) (*models.User, error) {
+	hashedPassword, err := hash.HashPassword(password)
 	if err != nil {
-		fmt.Println("Hashing Error:", err)
-		return err
+		return nil, err
 	}
-	user.PasswordHash = hashedPassword
-	user.Role = "user"
-	err = s.Repo.RegisterUser(user)
+
+	user := &models.User{
+		Username:     username,
+		Email:        email,
+		PasswordHash: hashedPassword,
+		Role:         role,
+	}
+
+	err = s.UserRepo.CreateUser(user)
 	if err != nil {
-		fmt.Println("Database Error:", err)
+		return nil, err
 	}
-	return err
+	return user, nil
 }
 
 func (s *AuthService) Login(email, password string) (string, error) {
-	user, err := s.Repo.GetUserByEmail(email)
-	if err != nil {
-		return "", errors.New("user not found")
-	}
-
-	if !utils.CheckPassword(password, user.PasswordHash) {
+	user, err := s.UserRepo.GetUserByEmail(email)
+	if err != nil || user == nil {
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := utils.GenerateToken(user.ID)
+	if !hash.CheckPasswordHash(password, user.PasswordHash) {
+		return "", errors.New("invalid credentials")
+	}
+
+	token, err := jwt.GenerateToken(user.Email, user.Role)
 	if err != nil {
 		return "", err
 	}
