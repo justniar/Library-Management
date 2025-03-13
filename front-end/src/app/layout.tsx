@@ -1,7 +1,6 @@
 "use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/organism/sidebar/SidebarUser";
 import Navbar from "@/components/organism/navbar/Navbar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -21,7 +20,6 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  //static
   const isAuthPage = pathname === "/auth/login" || pathname === "/auth/register";
   const [userRole, setUserRole] = useState<"admin" | "user">("user");
   const [username, setUsername] = useState("salsabila");
@@ -36,15 +34,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body className="min-h-screen">
+      <body className="h-screen overflow-hidden flex">
         {isAuthPage ? (
           <>{children}</>
         ) : (
-          <div className="flex">
-            {userRole === "admin" ? <SidebarAdmin/> :<SidebarUser /> }
-            <div className="w-full flex flex-col z-0">
+          <div className="flex w-full h-screen">
+            {userRole === "admin" ? <SidebarAdmin/> : <SidebarUser />}
+            <div className="flex flex-col w-full h-screen">
               <Navbar username={username} />
-              <main className="p-4">{children}</main>
+              <main className="flex-1 overflow-auto p-4">{children}</main>
             </div>
           </div>
         )}

@@ -4,13 +4,14 @@ export interface BookProps {
     title: string;
     author: string;
     stock: number;
-    onBorrow: ()=>void;
+    // onBorrow: ()=>void;
 }
 
 export interface BorrowedBook {
     id: number;
     title: string;
     borrower: string;
+    author: string;
     borrowedDate: string;
     status: "Borrowed" | "Returned";
 }

@@ -50,12 +50,12 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 h-screen">
+    <div className="w-full grid grid-cols-2 h-screen">
       <div className="relative">
         <Image src={pics} alt="Register Illustration" fill className="object-cover" />
       </div>
 
-      <div className="w-full flex items-center justify-center bg-white p-8">
+      <div className="w-full h-full flex items-center justify-center bg-white p-8">
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold text-center">Register</h2>
           {error && <p className="text-red-500 text-center">{error}</p>}

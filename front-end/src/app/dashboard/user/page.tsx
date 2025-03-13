@@ -1,4 +1,5 @@
 "use client";
+import Pagination from "@/components/atom/pagination";
 import CardBook from "@/components/organism/book/CardBook";
 import Hero from "@/components/organism/carrousel/Hero";
 import { BookProps } from "@/utils/types";
@@ -8,6 +9,8 @@ export default function Home() {
   const [books, setBooks] = useState<BookProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 8;
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -28,6 +31,10 @@ export default function Home() {
     fetchBooks();
   }, []);
 
+  const startIndex = (currentPage - 1) * booksPerPage;
+  const endIndex = startIndex + booksPerPage;
+  const displayedBooks = books.slice(startIndex, endIndex);
+
   return (
       <div className="w-full flex flex-col z-0">
         <Hero/>
@@ -36,8 +43,8 @@ export default function Home() {
             <p>Loading books</p>
           ) : error ? (
             <p>{error}</p>
-          ): books.length > 0 ? (
-            books.map((book)=>(
+          ): displayedBooks.length > 0 ? (
+            displayedBooks.map((book)=>(
               <CardBook 
                 key={book.id}
                 id={book.id}
@@ -49,6 +56,12 @@ export default function Home() {
             ))
           ) : (<p>no books available</p>)}
         </div>
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={Math.ceil(books.length / booksPerPage)}
+          onPageChange={(page: number) => setCurrentPage(page)}
+        />
       </div>
+      
   );
 }

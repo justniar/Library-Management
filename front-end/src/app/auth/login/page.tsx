@@ -18,7 +18,7 @@ const LoginPage = () => {
     };
 
   return (
-    <div className="grid grid-cols-2 h-screen">
+    <div className="w-full grid grid-cols-2 h-screen">
       <div className="relative">
         <Image
           src={pics}
@@ -28,7 +28,7 @@ const LoginPage = () => {
         />
       </div>
 
-      <div className="w-full flex items-center justify-center bg-white p-8">
+      <div className="w-full h-full flex items-center justify-center bg-white p-8">
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold text-center">Login</h2>
           <form onSubmit={handleSubmit} className="mt-6">
