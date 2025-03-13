@@ -4,7 +4,7 @@ import { JSX, useState } from "react";
 import { FaBars, FaBook, FaHistory, FaHome, FaRegUserCircle } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 
-const Sidebar = () => {
+const SidebarAdmin= () => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -16,9 +16,10 @@ const Sidebar = () => {
 
         <nav className="mt-5">
           <ul>
-            <SidebarItem to="/" icon={<FaHome className="w-6 h-6" />} text="Dashboard" isOpen={isOpen} />
+            <SidebarItem to="/dashboard/admin" icon={<FaHome className="w-6 h-6" />} text="Dashboard" isOpen={isOpen} />
             <SidebarItem to="/book-borrowed" icon={<FaBook className="w-6 h-6" />} text="Book Borrowed" isOpen={isOpen} />
-            <SidebarItem to="/history" icon={<FaHistory className="w-6 h-6" />} text="History" isOpen={isOpen} />
+            <SidebarItem to="/history-book" icon={<FaHistory className="w-6 h-6" />} text="History" isOpen={isOpen} />
+            <SidebarItem to="/history-user" icon={<FaRegUserCircle className="w-6 h-6" />} text="History" isOpen={isOpen} />
 
             <SidebarItem to="/profile" icon={<FaRegUserCircle className="w-6 h-6" />} text="Profile" isOpen={isOpen} />
             <SidebarItem to="/settings" icon={<IoMdSettings className="w-6 h-6" />} text="Settings" isOpen={isOpen} />
@@ -43,4 +44,4 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, text, isOpen }) => 
   </li>
 );
 
-export default Sidebar;
+export default SidebarAdmin;
