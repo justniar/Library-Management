@@ -2,17 +2,24 @@ package main
 
 import (
 	"backend/config"
-	"backend/routes"
+	"backend/handler"
+	"backend/repositories"
+	service "backend/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	config.ConnectDatabase()
+	config.InitDB()
+
+	userRepo := repositories.NewUserRepository(config.DB)
+	authService := service.NewAuthService(userRepo)
+	authHandler := handler.NewAuthHandler(authService)
 
 	r := gin.Default()
 
-	routes.AuthRoutes(r)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
 
-	r.Run(":8080") // Run server
+	r.Run(":8080")
 }
