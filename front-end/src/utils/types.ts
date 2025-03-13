@@ -4,6 +4,7 @@ export interface BookProps {
     title: string;
     author: string;
     stock: number;
+    category?: string;
     // onBorrow: ()=>void;
 }
 
