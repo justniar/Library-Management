@@ -1,23 +1,44 @@
 "use client";
 
 import { BorrowedBook } from "@/utils/types";
-import { useState } from "react";
-
-const initialBook: BorrowedBook[] = [
-  { id: 1, title: "The Pragmatic Programmer", borrower: "Alice", borrowedDate: "2024-07-20", status: "Borrowed" },
-  { id: 2, title: "Clean Code", borrower: "Bob", borrowedDate: "2024-07-18", status: "Borrowed" },
-  { id: 3, title: "Design Patterns", borrower: "Charlie", borrowedDate: "2024-07-15", status: "Returned" },
-];
+import { useEffect, useState } from "react";
 
 const HistoryPage = () => {
-  const [books, setBooks] = useState(initialBook);
+  const [books, setBooks] = useState<BorrowedBook[]>([]);
+  const userID = 1;
 
-  const handleReturn = (id: number) => {
-    setBooks((prevBooks) =>
-      prevBooks.map((book) =>
-        book.id === id ? { ...book, status: "Returned" } : book
-      )
-    );
+  useEffect(() => {
+    const fetchBorrowedBooks = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/book/history/${userID}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch borrowed books");
+        }
+        const data = await response.json();
+        console.log(data);
+        setBooks(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchBorrowedBooks();
+  }, []);
+
+  const handleReturn = async (bookID: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/book/return/${bookID}`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to return book");
+      }
+      setBooks(books.map(book => 
+        book.book_id === bookID ? { ...book, status: "Returned" } : book
+      ));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -27,33 +48,32 @@ const HistoryPage = () => {
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-red-900 text-amber-50">
-              <th className="p-3 text-left">Title</th>
-              <th className="p-3 text-left">Borrower</th>
+              <th className="p-3 text-left">Book</th>
+              <th className="p-3 text-left">Category</th>
               <th className="p-3 text-left">Borrowed Date</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-center">Action</th>
+              <th className="p-3 text-left">Returning Date</th>
+              <th className="p-3 text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             {books.map((book) => (
               <tr key={book.id} className="border-b">
-                <td className="p-3">{book.title}</td>
-                <td className="p-3">{book.borrower}</td>
-                <td className="p-3">{book.borrowedDate}</td>
+                <td className="p-3 flex items-center">
+                  <img src={book.image_url} alt={book.title} className="w-12 h-12 mr-3 rounded-md" />
+                  <div>
+                    <p className="font-semibold">{book.title}</p>
+                    <p className="text-sm text-gray-500">{book.author}</p>
+                  </div>
+                </td>
+                <td className="p-3">{book.category}</td>
+                <td className="p-3">
+                  {book.borrowedDate ? new Date(book.borrowedDate).toLocaleDateString() : "N/A"}
+                </td>
+                <td className="p-3">
+                  {book.returnDate ? new Date(book.returnDate).toLocaleDateString() : "N/A"}
+                </td>
                 <td className={`p-3 ${book.status === "Borrowed" ? "text-red-900" : "text-green-900"}`}>
                   {book.status}
-                </td>
-                <td className="p-3 text-center">
-                  {book.status === "Borrowed" ? (
-                    <button
-                      onClick={() => handleReturn(book.id)}
-                      className="bg-red-900 text-white px-4 py-1 rounded hover:bg-red-800"
-                    >
-                      Return
-                    </button>
-                  ) : (
-                    <span className="text-gray-400">Returned</span>
-                  )}
                 </td>
               </tr>
             ))}

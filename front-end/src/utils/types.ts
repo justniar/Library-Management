@@ -9,9 +9,14 @@ export interface BookProps {
 
 export interface BorrowedBook {
     id: number;
+    user_id: number;
+    book_id: number;
     title: string;
-    borrower: string;
     author: string;
+    category: string;
+    image_url: string;
     borrowedDate: string;
-    status: "Borrowed" | "Returned";
-}
+    returnDate?: string | null;
+    status: string;
+  }
+  

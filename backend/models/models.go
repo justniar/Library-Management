@@ -30,6 +30,10 @@ type BorrowHistory struct {
 	ID         int        `json:"id"`
 	UserID     int        `json:"user_id"`
 	BookID     int        `json:"book_id"`
+	Title      string     `json:"title" binding:"required"`
+	ImageUrl   string     `json:"image_url"`
+	Author     string     `json:"author" binding:"required"`
+	Category   string     `json:"category"`
 	BorrowDate time.Time  `json:"borrow_date"`
 	ReturnDate *time.Time `json:"return_date,omitempty"`
 	Status     string     `json:"status"`

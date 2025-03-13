@@ -22,7 +22,7 @@ const CardBook: React.FC<BookProps> = ({ id, image_url, title, author, stock }) 
       }
 
       setCurrentStock((prevStock) => prevStock - 1); 
-      router.push("/book-borrowed"); 
+      router.push("/history"); 
     } catch (error) {
       console.error(error);
     }
