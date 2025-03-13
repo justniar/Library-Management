@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 )
 
 type BookRepository struct {
@@ -91,6 +92,22 @@ func (r *BookRepository) BorrowBook(userID, bookID int) error {
 	return nil
 }
 
-// func (r *BookRepository) ReturnBook() ([]models.Book, error) {
+func (r *BookRepository) DeleteBook(bookID int) error {
+	var exists bool
+	err := r.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM books WHERE id=$1 AND deleted_at IS NULL)", bookID).Scan(&exists)
+	if err != nil {
+		log.Println("Error checking book existence:", err)
+		return err
+	}
+	if !exists {
+		return errors.New("book not found or already deleted")
+	}
 
-// }
+	_, err = r.DB.Exec("UPDATE books SET deleted_at = $2 WHERE id = $1", bookID, time.Now())
+	if err != nil {
+		log.Println("Error soft deleting book:", err)
+		return err
+	}
+
+	return nil
+}
