@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"database/sql"
 	"errors"
+	"log"
 )
 
 type BookRepository struct {
@@ -15,8 +16,10 @@ func NewBookRepository(db *sql.DB) *BookRepository {
 }
 
 func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
-	rows, err := r.DB.Query("SELECT id, title, author, stock FROM books")
+	query := `SELECT id, title, author, category, stock, image_url, created_at, updated_at FROM books WHERE deleted_at IS NULL`
+	rows, err := r.DB.Query(query)
 	if err != nil {
+		log.Println("Error fetching books:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -24,8 +27,9 @@ func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
 	var books []models.Book
 	for rows.Next() {
 		var book models.Book
-		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Stock)
+		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.ImageUrl, &book.CreatedAt, &book.UpdatedAt)
 		if err != nil {
+			log.Println("Error scanning book:", err)
 			return nil, err
 		}
 		books = append(books, book)

@@ -16,10 +16,15 @@ func main() {
 	authService := service.NewAuthService(userRepo)
 	authHandler := handler.NewAuthHandler(authService)
 
+	bookRepo := repositories.NewBookRepository(config.DB)
+	bookService := service.NewBookService(bookRepo)
+	bookHandler := handler.NewBookHandler(bookService)
+
 	r := gin.Default()
 
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)
 
+	r.GET("/books", bookHandler.GetAllBooks)
 	r.Run(":8080")
 }
