@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 export default function BorrowedBooks() {
   const [books, setBooks] = useState<BorrowedBook[]>([]);
   const [selectedBook, setSelectedBook] = useState<BorrowedBook | null>(null);
+  const [isReturning, setIsReturning] = useState(false);
+  
   const userID = 1;
 
   useEffect(() => {
@@ -16,7 +18,7 @@ export default function BorrowedBooks() {
         
         const data = await response.json();
         const filteredBooks = data
-          .filter((book: BorrowedBook) => book.status !== "Returned")
+          .filter((book: BorrowedBook) => book.status !== "returned")
           .map((book: BorrowedBook) => ({
             ...book,
             returnDate: book.returnDate ? new Date(book.returnDate).toLocaleDateString() : "Not Available",
@@ -31,6 +33,32 @@ export default function BorrowedBooks() {
 
     fetchBorrowedBooks();
   }, [userID]);
+
+  const handleReturnBook = async (bookId: number) => {
+    setIsReturning(true);
+  
+    try {
+      console.log(`Returning book with ID: ${bookId}`);
+  
+      const response = await fetch(
+        `http://localhost:8080/book/return/${userID}/${bookId}`,
+        { method: "PUT" }
+      );
+  
+      const responseData = await response.json();
+      console.log("Response:", responseData);
+  
+      if (!response.ok) throw new Error(responseData.message || "Failed to return book");
+  
+      setBooks((prevBooks) => prevBooks.filter((book) => book.book_id !== bookId));
+      setSelectedBook(null);
+    } catch (error) {
+      console.error("Error returning book:", error);
+    } finally {
+      setIsReturning(false);
+    }
+  };
+  
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-1 overflow-y-hidden">
@@ -56,7 +84,7 @@ export default function BorrowedBooks() {
       </div>
 
       <div className="md:w-2/3">
-        <BookDetails book={selectedBook} />
+        <BookDetails book={selectedBook} onReturn={handleReturnBook} />
       </div>
     </div>
   );

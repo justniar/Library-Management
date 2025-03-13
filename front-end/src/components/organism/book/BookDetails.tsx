@@ -3,11 +3,13 @@ import { BorrowedBook } from "@/utils/types";
 
 interface BookDetailsProps {
   book: BorrowedBook | null;
+  onReturn: (bookId: number) => void;
 }
 
-const BookDetails: React.FC<BookDetailsProps> = ({ book }) => {
+const BookDetails: React.FC<BookDetailsProps> = ({ book, onReturn  }) => {
   const [bookDetails, setBookDetails] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [isReturning, setIsReturning] = useState(false);
 
   useEffect(() => {
     if (!book?.book_id) return;
@@ -53,11 +55,12 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book }) => {
               />
             </div>
             <div className="mt-6 flex gap-4">
-              <button className="flex-1 bg-red-700 dark:bg-gray-700 text-white py-3 rounded-lg font-semibold shadow-md transition-all duration-300 hover:bg-red-800 dark:hover:bg-gray-600">
-                Borrow Book
-              </button>
-              <button className="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-3 rounded-lg font-semibold shadow-md transition-all duration-300 hover:bg-gray-400 dark:hover:bg-gray-500">
-                Returned
+              <button
+                className="flex-1 bg-red-900 text-amber-50 cursor-pointer dark:text-white py-3 rounded-lg font-semibold shadow-md transition-all duration-300 hover:bg-red-800 dark:hover:bg-gray-500"
+                onClick={() => book && onReturn(book.book_id)}
+                disabled={isReturning}
+              >
+                {isReturning ? "Returning..." : "Return Book"}
               </button>
             </div>
           </div>
