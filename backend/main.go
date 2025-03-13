@@ -31,5 +31,16 @@ func main() {
 	r.DELETE("/books/:id", bookHandler.DeleteBook)
 	r.GET("/books/:id/details", bookHandler.GetBookDetails)
 
+	borrowingRepo := repositories.NewBorrowingRepository(config.DB)
+	borrowingService := service.NewBorrowingService(borrowingRepo)
+	borrowingHandler := handler.NewBorrowingHandler(borrowingService)
+
+	api := r.Group("/book")
+	{
+		api.POST("/borrow/:user_id/:book_id", borrowingHandler.BorrowBook)
+		api.PUT("/return/:user_id/:book_id", borrowingHandler.ReturnBook)
+		api.GET("/history/:user_id", borrowingHandler.GetBorrowingHistory)
+	}
+
 	r.Run(":8080")
 }
