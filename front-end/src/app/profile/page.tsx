@@ -1,8 +1,9 @@
+import Profile from '@/components/pages/Profile'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <Profile/>
   )
 }
 
