@@ -3,6 +3,7 @@ package repositories
 import (
 	"backend/models"
 	"database/sql"
+	"fmt"
 )
 
 type UserRepository struct {
@@ -16,6 +17,10 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 func (r *UserRepository) RegisterUser(user models.User) error {
 	_, err := r.DB.Exec("INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4)",
 		user.Username, user.Email, user.PasswordHash, user.Role)
+
+	if err != nil {
+		fmt.Println("Database Insert Error:", err)
+	}
 	return err
 }
 

@@ -5,6 +5,7 @@ import (
 	"backend/repositories"
 	"backend/utils"
 	"errors"
+	"fmt"
 )
 
 type AuthService struct {
@@ -16,13 +17,19 @@ func NewAuthService(r *repositories.UserRepository) *AuthService {
 }
 
 func (s *AuthService) Register(user models.User) error {
+	fmt.Println("Received User:", user)
 	hashedPassword, err := utils.HashPassword(user.PasswordHash)
 	if err != nil {
+		fmt.Println("Hashing Error:", err)
 		return err
 	}
 	user.PasswordHash = hashedPassword
 	user.Role = "user"
-	return s.Repo.RegisterUser(user)
+	err = s.Repo.RegisterUser(user)
+	if err != nil {
+		fmt.Println("Database Error:", err)
+	}
+	return err
 }
 
 func (s *AuthService) Login(email, password string) (string, error) {
