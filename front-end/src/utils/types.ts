@@ -13,4 +13,4 @@ export interface BorrowedBook {
     borrower: string;
     borrowedDate: string;
     status: "Borrowed" | "Returned";
-  }
+}

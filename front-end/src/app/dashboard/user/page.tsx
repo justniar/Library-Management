@@ -39,12 +39,12 @@ export default function Home() {
           ): books.length > 0 ? (
             books.map((book)=>(
               <CardBook 
-                  key={book.id}
-                  image_url={book.image_url}
-                  title={book.title}
-                  author={book.author}
-                  stock={book.stock}
-                  onBorrow={book.onBorrow}
+                key={book.id}
+                id={book.id}
+                image_url={book.image_url}
+                title={book.title}
+                author={book.author}
+                stock={book.stock}
               />
             ))
           ) : (<p>no books available</p>)}

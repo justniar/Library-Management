@@ -4,7 +4,7 @@ import { JSX, useState } from "react";
 import { FaBars, FaBook, FaHistory, FaHome, FaRegUserCircle } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 
-const Sidebar = () => {
+const SidebarUser = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -43,4 +43,4 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, text, isOpen }) => 
   </li>
 );
 
-export default Sidebar;
+export default SidebarUser;
