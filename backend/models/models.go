@@ -1,15 +1,21 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
+	gorm.Model
 	ID           int       `json:"id"`
 	Username     string    `json:"username"`
 	Email        string    `json:"email"`
 	PasswordHash string    `json:"-"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updates_at"`
-	DeletedAt    time.Time `json:"deleted_at"`
+	Role         string    `json:role"`
+	CreatedAt    time.Time `json:"created_at,now()"`
+	UpdatedAt    time.Time `json:"updates_at,omitempty"`
+	DeletedAt    time.Time `json:"deleted_at,omitempty"`
 }
 
 type Book struct {
