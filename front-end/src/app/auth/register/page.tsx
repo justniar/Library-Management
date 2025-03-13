@@ -11,12 +11,42 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    console.log("Registering:", { username, email, password, role });
-    router.push("/auth/login");
+    const payload = {
+      username,
+      email,
+      password_hash: password,
+      role
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
+      alert("Registration successful!");
+      router.push("/auth/login");
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,6 +58,7 @@ const RegisterPage = () => {
       <div className="w-full flex items-center justify-center bg-white p-8">
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold text-center">Register</h2>
+          {error && <p className="text-red-500 text-center">{error}</p>}
           <form onSubmit={handleSubmit} className="mt-6">
             <div>
               <label className="block font-medium">Username</label>
@@ -86,7 +117,7 @@ const RegisterPage = () => {
               type="submit"
               className="w-full mt-6 bg-red-900 text-white py-2 rounded-md hover:bg-red-800"
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           </form>
           <p className="text-center mt-4">
