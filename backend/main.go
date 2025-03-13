@@ -26,5 +26,7 @@ func main() {
 	r.POST("/login", authHandler.Login)
 
 	r.GET("/books", bookHandler.GetAllBooks)
+	r.POST("/books", bookHandler.AddBook)
+
 	r.Run(":8080")
 }

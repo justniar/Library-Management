@@ -16,3 +16,7 @@ func NewBookService(bookRepo *repositories.BookRepository) *BookService {
 func (s *BookService) GetAllBooks() ([]models.Book, error) {
 	return s.BookRepo.GetAllBooks()
 }
+
+func (s *BookService) AddBook(book models.Book) (int, error) {
+	return s.BookRepo.AddBook(book)
+}

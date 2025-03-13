@@ -37,9 +37,19 @@ func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
 	return books, nil
 }
 
-// func (r *BookRepository) AddBook() ([]models.Book, error) {
+func (r *BookRepository) AddBook(book models.Book) (int, error) {
+	var bookID int
+	query := `INSERT INTO books (title, author, category, stock, image_url, created_at, updated_at)
+	          VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING id`
 
-// }
+	err := r.DB.QueryRow(query, book.Title, book.Author, book.Category, book.Stock, book.ImageUrl).Scan(&bookID)
+	if err != nil {
+		log.Println("Error adding book:", err)
+		return 0, err
+	}
+
+	return bookID, nil
+}
 
 func (r *BookRepository) BorrowBook(userID, bookID int) error {
 	var stock int
