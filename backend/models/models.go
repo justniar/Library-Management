@@ -17,13 +17,13 @@ type User struct {
 
 type Book struct {
 	ID        int       `json:"id"`
-	Title     string    `json:"title"`
-	Author    string    `json:"author"`
+	Title     string    `json:"title" binding:"required"`
+	Author    string    `json:"author" binding:"required"`
+	Category  string    `json:"category"`
 	Stock     int       `json:"stock"`
 	ImageUrl  string    `json:"image_url"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
 }
 
 type BorrowHistory struct {
@@ -36,4 +36,18 @@ type BorrowHistory struct {
 	CreatedAt  time.Time  `json:"created_at"`
 	UpdatedAt  time.Time  `json:"updated_at"`
 	DeletedAt  time.Time  `json:"deleted_at,omitempty"`
+}
+
+type BookDetails struct {
+	ID              int        `json:"id"`
+	BookID          int        `json:"book_id"`
+	Publisher       string     `json:"publisher"`
+	PublicationYear int        `json:"publication_year"`
+	Pages           int        `json:"pages"`
+	Language        string     `json:"language"`
+	Description     string     `json:"description"`
+	ISBN            string     `json:"isbn"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	DeletedAt       *time.Time `json:"deleted_at,omitempty"`
 }
