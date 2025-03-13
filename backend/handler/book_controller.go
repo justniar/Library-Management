@@ -26,6 +26,23 @@ func (h *BookHandler) GetAllBooks(c *gin.Context) {
 	c.JSON(http.StatusOK, books)
 }
 
+func (h *BookHandler) GetBookDetails(c *gin.Context) {
+	bookID := c.Param("id")
+	id, err := strconv.Atoi(bookID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
+		return
+	}
+
+	bookDetails, err := h.BookService.GetBookDetails(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book details not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, bookDetails)
+}
+
 func (h *BookHandler) AddBook(c *gin.Context) {
 	var book models.Book
 	if err := c.ShouldBindJSON(&book); err != nil {

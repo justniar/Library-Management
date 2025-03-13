@@ -29,6 +29,7 @@ func main() {
 	r.POST("/books", bookHandler.AddBook)
 	r.PUT("/books/:id", bookHandler.UpdateBook)
 	r.DELETE("/books/:id", bookHandler.DeleteBook)
+	r.GET("/books/:id/details", bookHandler.GetBookDetails)
 
 	r.Run(":8080")
 }

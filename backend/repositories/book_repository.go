@@ -38,6 +38,28 @@ func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
 	return books, nil
 }
 
+func (r *BookRepository) GetBookDetails(bookID int) (*models.BookDetails, error) {
+	query := `SELECT id, book_id, publisher, publication_year, pages, language, description, isbn, created_at, updated_at, deleted_at 
+			  FROM book_details WHERE book_id = $1 AND deleted_at IS NULL`
+
+	var bookDetails models.BookDetails
+	err := r.DB.QueryRow(query, bookID).Scan(
+		&bookDetails.ID, &bookDetails.BookID, &bookDetails.Publisher,
+		&bookDetails.PublicationYear, &bookDetails.Pages, &bookDetails.Language,
+		&bookDetails.Description, &bookDetails.ISBN, &bookDetails.CreatedAt,
+		&bookDetails.UpdatedAt, &bookDetails.DeletedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("book details not found")
+		}
+		return nil, err
+	}
+
+	return &bookDetails, nil
+}
+
 func (r *BookRepository) AddBook(book models.Book) (int, error) {
 	var bookID int
 	query := `INSERT INTO books (title, author, category, stock, image_url, created_at, updated_at)

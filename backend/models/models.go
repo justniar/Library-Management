@@ -35,3 +35,17 @@ type BorrowHistory struct {
 	UpdatedAt  time.Time  `json:"updated_at"`
 	DeletedAt  time.Time  `json:"deleted_at,omitempty"`
 }
+
+type BookDetails struct {
+	ID              int        `json:"id"`
+	BookID          int        `json:"book_id"`
+	Publisher       string     `json:"publisher"`
+	PublicationYear int        `json:"publication_year"`
+	Pages           int        `json:"pages"`
+	Language        string     `json:"language"`
+	Description     string     `json:"description"`
+	ISBN            string     `json:"isbn"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	DeletedAt       *time.Time `json:"deleted_at,omitempty"`
+}
