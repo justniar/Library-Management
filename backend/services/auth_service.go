@@ -6,7 +6,6 @@ import (
 	"backend/utils/hash"
 	"backend/utils/jwt"
 	"errors"
-	"fmt"
 )
 
 type AuthService struct {
@@ -18,13 +17,11 @@ func NewAuthService(userRepo *repositories.UserRepository) *AuthService {
 }
 
 func (s *AuthService) Register(username, email, password, role string) (*models.User, error) {
-	fmt.Println("Plain Password:", password)
 	hashedPassword, err := hash.HashPassword(password)
 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Hashed Password:", hashedPassword)
 
 	user := &models.User{
 		Username:     username,
@@ -47,7 +44,6 @@ func (s *AuthService) Login(email, password string) (string, error) {
 	}
 
 	if !hash.CheckPasswordHash(password, user.PasswordHash) {
-		fmt.Println("Password verification failed")
 		return "", errors.New("invalid credentials")
 	}
 
@@ -55,9 +51,6 @@ func (s *AuthService) Login(email, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("Login Email:", email)
-	fmt.Println("Login Password:", password)
-	fmt.Println("Stored Hash:", user.PasswordHash)
 
 	return token, nil
 }

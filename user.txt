@@ -1,0 +1,8 @@
+{
+    "email": "salsaa@gmail.com",
+    "password_hash": "salsa123"
+}
+{
+    "email": "admin@gmail.com",
+    "password_hash": "admin123"
+}

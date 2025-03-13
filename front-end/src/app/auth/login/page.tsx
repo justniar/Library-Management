@@ -4,18 +4,68 @@ import Image from "next/image";
 import pics from "@/assets/pic.jpg"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
     const router = useRouter();
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Login with:", { username, password });
-
-        router.push('/dashboard/user')
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoading(true);
+      setError("");
+    
+      const payload = {
+        email,
+        password_hash: password,
+      };
+    
+      try {
+        const response = await fetch("http://localhost:8080/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+    
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Login failed");
+        }
+    
+        const data = await response.json();
+        const token = data.token;
+    
+        if (!token) {
+          throw new Error("Invalid token received.");
+        }
+    
+        const decodedToken: any = jwtDecode(token);
+        const role = decodedToken.role;
+    
+        if (!role) {
+          throw new Error("Role not found in token.");
+        }
+    
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+    
+        if (role.toLowerCase() === "admin") {
+          router.push("/dashboard/admin");
+        } else {
+          router.push("/dashboard/user");
+        }
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
+  
 
   return (
     <div className="w-full grid grid-cols-2 h-screen">
@@ -33,12 +83,12 @@ const LoginPage = () => {
           <h2 className="text-3xl font-bold text-center">Login</h2>
           <form onSubmit={handleSubmit} className="mt-6">
             <div>
-              <label className="block font-medium">Username</label>
+              <label className="block font-medium">Email</label>
               <input
-                type="username"
+                type="email"
                 className="w-full mt-2 px-3 py-2 border rounded-md"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
