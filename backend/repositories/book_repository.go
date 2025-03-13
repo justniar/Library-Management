@@ -51,6 +51,20 @@ func (r *BookRepository) AddBook(book models.Book) (int, error) {
 	return bookID, nil
 }
 
+func (r *BookRepository) UpdateBook(book models.Book) error {
+	query := `UPDATE books 
+              SET title = $1, author = $2, category = $3, stock = $4, image_url = $5, updated_at = NOW() 
+              WHERE id = $6 AND deleted_at IS NULL`
+
+	_, err := r.DB.Exec(query, book.Title, book.Author, book.Category, book.Stock, book.ImageUrl, book.ID)
+	if err != nil {
+		log.Println("Error updating book:", err)
+		return err
+	}
+
+	return nil
+}
+
 func (r *BookRepository) BorrowBook(userID, bookID int) error {
 	var stock int
 	err := r.DB.QueryRow("SELECT stock FROM books WHERE id=?", bookID).Scan(&stock)

@@ -20,3 +20,7 @@ func (s *BookService) GetAllBooks() ([]models.Book, error) {
 func (s *BookService) AddBook(book models.Book) (int, error) {
 	return s.BookRepo.AddBook(book)
 }
+
+func (s *BookService) UpdateBook(book models.Book) error {
+	return s.BookRepo.UpdateBook(book)
+}
