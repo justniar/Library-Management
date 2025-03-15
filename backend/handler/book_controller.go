@@ -2,7 +2,8 @@ package handler
 
 import (
 	"backend/models"
-	"backend/services"
+	service "backend/services"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -44,10 +45,25 @@ func (h *BookHandler) GetBookDetails(c *gin.Context) {
 }
 
 func (h *BookHandler) AddBook(c *gin.Context) {
-	var book models.Book
-	if err := c.ShouldBindJSON(&book); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	stockStr := c.PostForm("stock")
+	file, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to upload image"})
 		return
+	}
+
+	filePath := fmt.Sprintf("uploads/%s", file.Filename)
+	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+		return
+	}
+
+	book := models.Book{
+		Title:    c.PostForm("title"),
+		Author:   c.PostForm("author"),
+		Category: c.PostForm("category"),
+		Stock:    c.PostForm(strconv.Atoi(stockStr)),
+		ImageURL: filePath,
 	}
 
 	bookID, err := h.BookService.AddBook(book)

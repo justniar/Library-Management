@@ -1,37 +1,9 @@
 "use client";
 
+import BookModal from "@/components/organism/book/BookModal";
 import { BookProps } from "@/utils/types";
 import { useEffect, useState } from "react";
 import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
-
-const BookModal = ({ isOpen, onClose, onSubmit, formData, setFormData }: any) => {
-  if (!isOpen) return null;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-10 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold text-red-900 text-center mb-4">
-          {formData.id ? "Edit Buku" : "Tambah Buku"}
-        </h2>
-        <form onSubmit={onSubmit} className="space-y-4">
-          <input type="text" name="title" placeholder="Judul Buku" className="w-full p-3 border rounded-lg" value={formData.title} onChange={handleChange} required />
-          <input type="text" name="author" placeholder="Penulis" className="w-full p-3 border rounded-lg" value={formData.author} onChange={handleChange} required />
-          <input type="text" name="category" placeholder="Kategori" className="w-full p-3 border rounded-lg" value={formData.category} onChange={handleChange} required />
-          <input type="number" name="stock" placeholder="Stok" className="w-full p-3 border rounded-lg" value={formData.stock} onChange={handleChange} required />
-          <input type="text" name="image_url" placeholder="URL Gambar" className="w-full p-3 border rounded-lg" value={formData.image_url} onChange={handleChange} required />
-          <div className="flex justify-between">
-            <button type="button" className="bg-gray-500 text-white py-2 px-4 rounded-lg" onClick={onClose}>Batal</button>
-            <button type="submit" className="bg-red-900 text-white py-2 px-4 rounded-lg">{formData.id ? "Update Buku" : "Tambah Buku"}</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState<BookProps[]>([]);
@@ -59,6 +31,8 @@ const AdminDashboard = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formDataToSend = new FormData();
+    if (formData.image_url) formDataToSend.append("image", formData.image_url);
     try {
       const method = formData.id ? "PUT" : "POST";
       const url = formData.id ? `http://localhost:8080/books/${formData.id}` : "http://localhost:8080/books";
@@ -66,7 +40,7 @@ const AdminDashboard = () => {
       if (!response.ok) throw new Error("Failed to save book");
       fetchBooks();
       setIsModalOpen(false);
-      setFormData({ id: 0, title: "", author: "", category: "", stock: 1, image_url: "" });
+      setFormData({ id: 0, title: "", author: "", category: "", stock: 1, image_url: null });
     } catch (error: any) {
       setError(error.message);
     }
