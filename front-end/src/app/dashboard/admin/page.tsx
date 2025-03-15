@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, image_url: "" });
+  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, imageFile: null });
 
   useEffect(() => {
     fetchBooks();
@@ -29,22 +29,53 @@ const AdminDashboard = () => {
     }
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   const formDataToSend = new FormData();
+  //   if (formData.image_url) formDataToSend.append("image", formData.image_url);
+  //   try {
+  //     const method = formData.id ? "PUT" : "POST";
+  //     const url = formData.id ? `http://localhost:8080/books/${formData.id}` : "http://localhost:8080/books";
+  //     const response = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
+  //     if (!response.ok) throw new Error("Failed to save book");
+  //     fetchBooks();
+  //     setIsModalOpen(false);
+  //     setFormData({ id: 0, title: "", author: "", category: "", stock: 1, image_url: null });
+  //   } catch (error: any) {
+  //     setError(error.message);
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     const formDataToSend = new FormData();
-    if (formData.image_url) formDataToSend.append("image", formData.image_url);
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("author", formData.author);
+    // formDataToSend.append("category", formData.category);
+    formDataToSend.append("stock", formData.stock.toString()); 
+    if (formData.imageFile) {
+      formDataToSend.append("imageFile", formData.imageFile);
+    }
+  
     try {
-      const method = formData.id ? "PUT" : "POST";
-      const url = formData.id ? `http://localhost:8080/books/${formData.id}` : "http://localhost:8080/books";
-      const response = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
-      if (!response.ok) throw new Error("Failed to save book");
-      fetchBooks();
+      const response = await fetch("http://localhost:8080/api/books", {
+        method: "POST",
+        body: formDataToSend,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to upload book");
+      }
+  
+      const data = await response.json();
+      console.log("Success:", data);
       setIsModalOpen(false);
-      setFormData({ id: 0, title: "", author: "", category: "", stock: 1, image_url: null });
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
+  
 
   const handleEdit = (book: BookProps) => {
     setFormData(book);

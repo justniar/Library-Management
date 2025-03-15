@@ -45,25 +45,36 @@ func (h *BookHandler) GetBookDetails(c *gin.Context) {
 }
 
 func (h *BookHandler) AddBook(c *gin.Context) {
-	stockStr := c.PostForm("stock")
+	var book models.Book
+
 	file, err := c.FormFile("image")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to upload image"})
 		return
 	}
-
-	filePath := fmt.Sprintf("uploads/%s", file.Filename)
+	filePath := fmt.Sprintf("../uploads/%s", file.Filename)
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
 		return
 	}
 
-	book := models.Book{
-		Title:    c.PostForm("title"),
-		Author:   c.PostForm("author"),
-		Category: c.PostForm("category"),
-		Stock:    c.PostForm(strconv.Atoi(stockStr)),
-		ImageURL: filePath,
+	title := c.PostForm("title")
+	author := c.PostForm("author")
+	category := c.PostForm("category")
+	stockStr := c.PostForm("stock")
+
+	stock, err := strconv.Atoi(stockStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stock value"})
+		return
+	}
+
+	book = models.Book{
+		Title:    title,
+		Author:   author,
+		Category: category,
+		Stock:    stock,
+		ImageUrl: filePath,
 	}
 
 	bookID, err := h.BookService.AddBook(book)

@@ -1,6 +1,7 @@
 export interface BookProps {
     id: number;
-    image_url: any;
+    image_url: string;
+    imageFile?: null;
     title: string;
     author: string;
     stock: number;
