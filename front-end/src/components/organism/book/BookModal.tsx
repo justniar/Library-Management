@@ -1,4 +1,5 @@
 import React from 'react'
+import DropZone from './DropZone';
 
 const BookModal = ({ isOpen, onClose, onSubmit, formData, setFormData }: any) => {
   if (!isOpen) return null;
@@ -20,7 +21,7 @@ const BookModal = ({ isOpen, onClose, onSubmit, formData, setFormData }: any) =>
           <input type="text" name="author" placeholder="Penulis" className="w-full p-3 border rounded-lg" value={formData.author} onChange={handleChange} required />
           <input type="text" name="category" placeholder="Kategori" className="w-full p-3 border rounded-lg" value={formData.category} onChange={handleChange} required />
           <input type="number" name="stock" placeholder="Stok" className="w-full p-3 border rounded-lg" value={formData.stock} onChange={handleChange} required />
-          <input type="file" name="image" placeholder="Gambar" className="w-full p-3 border rounded-lg" value={formData.image_url} onChange={handleChange} accept='image/' required />
+          <DropZone onChange={handleChange}/>
           <div className="flex justify-between">
             <button type="button" className="bg-gray-500 text-white py-2 px-4 rounded-lg" onClick={onClose}>Batal</button>
             <button type="submit" className="bg-red-900 text-white py-2 px-4 rounded-lg">{formData.id ? "Update Buku" : "Tambah Buku"}</button>
