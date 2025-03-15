@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"backend/models"
 	service "backend/services"
 
 	"github.com/gin-gonic/gin"
@@ -17,19 +18,14 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) Register(c *gin.Context) {
-	var request struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Role     string `json:"role"`
-	}
+	var request models.User
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	user, err := h.AuthService.Register(request.Username, request.Email, request.Password, request.Role)
+	user, err := h.AuthService.Register(request.Username, request.Email, request.PasswordHash, request.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
