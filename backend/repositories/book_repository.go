@@ -17,7 +17,7 @@ func NewBookRepository(db *sql.DB) *BookRepository {
 }
 
 func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
-	query := `SELECT id, title, author, category, stock, image_url, created_at, updated_at FROM books WHERE deleted_at IS NULL`
+	query := `SELECT id, title, author, category, stock, image, updated_at, updated_at FROM books WHERE deleted_at IS NULL`
 	rows, err := r.DB.Query(query)
 	if err != nil {
 		log.Println("Error fetching books:", err)
@@ -28,7 +28,7 @@ func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
 	var books []models.Book
 	for rows.Next() {
 		var book models.Book
-		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.ImageUrl, &book.CreatedAt, &book.UpdatedAt)
+		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.Image, &book.CreatedAt, &book.UpdatedAt)
 		if err != nil {
 			log.Println("Error scanning book:", err)
 			return nil, err
@@ -38,16 +38,16 @@ func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
 	return books, nil
 }
 
-func (r *BookRepository) GetBookDetails(bookID int) (*models.BookDetails, error) {
-	query := `SELECT id, book_id, publisher, publication_year, pages, language, description, isbn, created_at, updated_at, deleted_at 
-			  FROM book_details WHERE book_id = $1 AND deleted_at IS NULL`
+func (r *BookRepository) GetBookDetails(bookID int) (*models.Book, error) {
+	query := `SELECT id, title, author, category, stock, image_url, publisher, 
+              publication_year, pages, language, description, isbn, created_at, updated_at, deleted_at
+	          FROM books WHERE id = $1 AND deleted_at IS NULL`
 
-	var bookDetails models.BookDetails
+	var book models.Book
 	err := r.DB.QueryRow(query, bookID).Scan(
-		&bookDetails.ID, &bookDetails.BookID, &bookDetails.Publisher,
-		&bookDetails.PublicationYear, &bookDetails.Pages, &bookDetails.Language,
-		&bookDetails.Description, &bookDetails.ISBN, &bookDetails.CreatedAt,
-		&bookDetails.UpdatedAt, &bookDetails.DeletedAt,
+		&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.Image,
+		&book.Publisher, &book.PublicationYear, &book.Pages, &book.Language,
+		&book.Description, &book.ISBN, &book.CreatedAt, &book.UpdatedAt, &book.DeletedAt,
 	)
 
 	if err != nil {
@@ -57,15 +57,16 @@ func (r *BookRepository) GetBookDetails(bookID int) (*models.BookDetails, error)
 		return nil, err
 	}
 
-	return &bookDetails, nil
+	return &book, nil
 }
 
 func (r *BookRepository) AddBook(book models.Book) (int, error) {
 	var bookID int
-	query := `INSERT INTO books (title, author, category, stock, image_url, created_at, updated_at)
-	          VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING id`
 
-	err := r.DB.QueryRow(query, book.Title, book.Author, book.Category, book.Stock, book.ImageUrl).Scan(&bookID)
+	query := `INSERT INTO books (title, author, category, publisher, publication_year, pages, language, description, isbn, stock, image_url, created_at, updated_at)
+	          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW()) RETURNING id`
+
+	err := r.DB.QueryRow(query, book.Title, book.Author, book.Category, book.Publisher, book.PublicationYear, book.Pages, book.Language, book.Description, book.ISBN, book.Stock, book.Image).Scan(&bookID)
 	if err != nil {
 		log.Println("Error adding book:", err)
 		return 0, err
@@ -75,11 +76,14 @@ func (r *BookRepository) AddBook(book models.Book) (int, error) {
 }
 
 func (r *BookRepository) UpdateBook(book models.Book) error {
-	query := `UPDATE books 
-              SET title = $1, author = $2, category = $3, stock = $4, image_url = $5, updated_at = NOW() 
-              WHERE id = $6 AND deleted_at IS NULL`
+	query := `UPDATE books SET title = $1, author = $2, category = $3, stock = $4, image_url = $5, 
+	          publisher = $6, publication_year = $7, pages = $8, language = $9, 
+	          description = $10, isbn = $11, updated_at = NOW()
+	          WHERE id = $12 AND deleted_at IS NULL`
 
-	_, err := r.DB.Exec(query, book.Title, book.Author, book.Category, book.Stock, book.ImageUrl, book.ID)
+	_, err := r.DB.Exec(query, book.Title, book.Author, book.Category, book.Stock, book.Image,
+		book.Publisher, book.PublicationYear, book.Pages, book.Language, book.Description, book.ISBN, book.ID)
+
 	if err != nil {
 		log.Println("Error updating book:", err)
 		return err

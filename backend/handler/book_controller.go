@@ -5,7 +5,9 @@ import (
 	service "backend/services"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,13 +37,13 @@ func (h *BookHandler) GetBookDetails(c *gin.Context) {
 		return
 	}
 
-	bookDetails, err := h.BookService.GetBookDetails(id)
+	book, err := h.BookService.GetBookDetails(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book details not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, bookDetails)
+	c.JSON(http.StatusOK, book)
 }
 
 func (h *BookHandler) AddBook(c *gin.Context) {
@@ -52,30 +54,45 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to upload image"})
 		return
 	}
-	filePath := fmt.Sprintf("../uploads/%s", file.Filename)
+
+	uniqueFilename := fmt.Sprintf("%d-%s", time.Now().UnixNano(), file.Filename)
+	filePath := filepath.Join("uploads", uniqueFilename)
+
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
 		return
 	}
 
-	title := c.PostForm("title")
-	author := c.PostForm("author")
-	category := c.PostForm("category")
-	stockStr := c.PostForm("stock")
+	book.Title = c.PostForm("title")
+	book.Author = c.PostForm("author")
+	book.Category = c.PostForm("category")
+	book.Publisher = c.PostForm("publisher")
 
-	stock, err := strconv.Atoi(stockStr)
+	publicationYear, err := strconv.Atoi(c.PostForm("publication_year"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid publication year"})
+		return
+	}
+	book.PublicationYear = publicationYear
+
+	pages, err := strconv.Atoi(c.PostForm("pages"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page count"})
+		return
+	}
+	book.Pages = pages
+
+	book.Language = c.PostForm("language")
+	book.Description = c.PostForm("description")
+	book.ISBN = c.PostForm("isbn")
+
+	stock, err := strconv.Atoi(c.PostForm("stock"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stock value"})
 		return
 	}
-
-	book = models.Book{
-		Title:    title,
-		Author:   author,
-		Category: category,
-		Stock:    stock,
-		ImageUrl: filePath,
-	}
+	book.Stock = stock
+	book.Image = filePath
 
 	bookID, err := h.BookService.AddBook(book)
 	if err != nil {
@@ -83,7 +100,10 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Book added successfully", "book_id": bookID})
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Book added successfully",
+		"book_id": bookID,
+	})
 }
 
 func (h *BookHandler) UpdateBook(c *gin.Context) {

@@ -17,7 +17,7 @@ func (s *BookService) GetAllBooks() ([]models.Book, error) {
 	return s.BookRepo.GetAllBooks()
 }
 
-func (s *BookService) GetBookDetails(bookID int) (*models.BookDetails, error) {
+func (s *BookService) GetBookDetails(bookID int) (*models.Book, error) {
 	return s.BookRepo.GetBookDetails(bookID)
 }
 

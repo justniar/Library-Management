@@ -61,7 +61,7 @@ func (r *borrowingRepository) GetBorrowingHistory(userID int) ([]models.BorrowHi
 	for rows.Next() {
 		var record models.BorrowHistory
 		err := rows.Scan(
-			&record.ID, &record.UserID, &record.BookID, &record.Title, &record.Author, &record.Category, &record.ImageUrl,
+			&record.ID, &record.UserID, &record.BookID, &record.Title, &record.Author, &record.Category, &record.Image,
 			&record.BorrowDate, &record.ReturnDate, &record.Status, &record.CreatedAt, &record.UpdatedAt,
 		)
 		if err != nil {
