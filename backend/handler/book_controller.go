@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	service "backend/services"
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -31,18 +32,22 @@ func (h *BookHandler) GetAllBooks(c *gin.Context) {
 
 func (h *BookHandler) GetBookDetails(c *gin.Context) {
 	bookID := c.Param("id")
+	log.Println("Received book ID:", bookID)
+
 	id, err := strconv.Atoi(bookID)
 	if err != nil {
+		log.Println("Invalid book ID:", bookID)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
 		return
 	}
 
 	book, err := h.BookService.GetBookDetails(id)
+	log.Println("Book not found with ID:", id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Book details not found"})
 		return
 	}
-
+	log.Println("Returning book details:", book)
 	c.JSON(http.StatusOK, book)
 }
 

@@ -39,10 +39,11 @@ func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
 }
 
 func (r *BookRepository) GetBookDetails(bookID int) (*models.Book, error) {
-	query := `SELECT id, title, author, category, stock, image_url, publisher, 
+	query := `SELECT id, title, author, category, stock, image, publisher, 
               publication_year, pages, language, description, isbn, created_at, updated_at, deleted_at
 	          FROM books WHERE id = $1 AND deleted_at IS NULL`
 
+	log.Println("Executing query:", query, "with bookID:", bookID)
 	var book models.Book
 	err := r.DB.QueryRow(query, bookID).Scan(
 		&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.Image,
@@ -52,8 +53,10 @@ func (r *BookRepository) GetBookDetails(bookID int) (*models.Book, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
+			log.Println("No book found with ID:", bookID)
 			return nil, errors.New("book details not found")
 		}
+		log.Println("Database error:", err)
 		return nil, err
 	}
 
@@ -63,7 +66,7 @@ func (r *BookRepository) GetBookDetails(bookID int) (*models.Book, error) {
 func (r *BookRepository) AddBook(book models.Book) (int, error) {
 	var bookID int
 
-	query := `INSERT INTO books (title, author, category, publisher, publication_year, pages, language, description, isbn, stock, image_url, created_at, updated_at)
+	query := `INSERT INTO books (title, author, category, publisher, publication_year, pages, language, description, isbn, stock, image, created_at, updated_at)
 	          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW()) RETURNING id`
 
 	err := r.DB.QueryRow(query, book.Title, book.Author, book.Category, book.Publisher, book.PublicationYear, book.Pages, book.Language, book.Description, book.ISBN, book.Stock, book.Image).Scan(&bookID)
@@ -76,7 +79,7 @@ func (r *BookRepository) AddBook(book models.Book) (int, error) {
 }
 
 func (r *BookRepository) UpdateBook(book models.Book) error {
-	query := `UPDATE books SET title = $1, author = $2, category = $3, stock = $4, image_url = $5, 
+	query := `UPDATE books SET title = $1, author = $2, category = $3, stock = $4, image = $5, 
 	          publisher = $6, publication_year = $7, pages = $8, language = $9, 
 	          description = $10, isbn = $11, updated_at = NOW()
 	          WHERE id = $12 AND deleted_at IS NULL`
