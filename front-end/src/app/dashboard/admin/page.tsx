@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, imageUrl: "" });
+  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, image: "" });
 
   useEffect(() => {
     fetchBooks();
@@ -28,23 +28,6 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const formDataToSend = new FormData();
-  //   if (formData.image_url) formDataToSend.append("image", formData.image_url);
-  //   try {
-  //     const method = formData.id ? "PUT" : "POST";
-  //     const url = formData.id ? `http://localhost:8080/books/${formData.id}` : "http://localhost:8080/books";
-  //     const response = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
-  //     if (!response.ok) throw new Error("Failed to save book");
-  //     fetchBooks();
-  //     setIsModalOpen(false);
-  //     setFormData({ id: 0, title: "", author: "", category: "", stock: 1, image_url: null });
-  //   } catch (error: any) {
-  //     setError(error.message);
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +109,7 @@ const AdminDashboard = () => {
                 <td className="p-3">{book.author}</td>
                 <td className="p-3">{book.category}</td>
                 <td className="p-3 text-center">{book.stock}</td>
-                <td className="p-3 text-center"><img src={book.imageUrl} alt={book.title} className="w-16 h-16 object-cover mx-auto" /></td>
+                <td className="p-3 text-center"><img src={book.image} alt={book.title} className="w-16 h-16 object-cover mx-auto" /></td>
                 <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
                   <button onClick={() => handleEdit(book)}><MdEdit />
                   </button>

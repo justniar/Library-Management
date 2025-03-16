@@ -48,7 +48,7 @@ export default function Home() {
               <CardBook 
                 key={book.id}
                 id={book.id}
-                imageUrl={book.imageUrl}
+                image={book.image}
                 title={book.title}
                 author={book.author}
                 stock={book.stock}
