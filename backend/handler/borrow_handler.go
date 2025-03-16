@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"backend/services"
+	service "backend/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,14 +18,23 @@ func NewBorrowingHandler(borrowingService service.BorrowingService) *BorrowingHa
 }
 
 func (h *BorrowingHandler) BorrowBook(c *gin.Context) {
-	userID, _ := strconv.Atoi(c.Param("user_id"))
-	bookID, _ := strconv.Atoi(c.Param("book_id"))
-
-	err := h.BorrowingService.BorrowBook(userID, bookID)
+	userID, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to borrow book"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
+	bookID, err := strconv.Atoi(c.Param("book_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
+		return
+	}
+
+	err = h.BorrowingService.BorrowBook(userID, bookID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Book borrowed successfully"})
 }
 

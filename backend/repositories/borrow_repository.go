@@ -22,15 +22,34 @@ func NewBorrowingRepository(db *sql.DB) BorrowingRepository {
 }
 
 func (r *borrowingRepository) BorrowBook(userID, bookID int) error {
-	query := `INSERT INTO borrowing_history (user_id, book_id, status) VALUES ($1, $2, 'borrowed')`
-	_, err := r.DB.Exec(query, userID, bookID)
-	return err
+	var stock int
+	err := r.DB.QueryRow(`SELECT stock FROM books WHERE id = $1`, bookID).Scan(&stock)
+	if err != nil {
+		return errors.New("book not found")
+	}
+	if stock <= 0 {
+		return errors.New("book is out of stock")
+	}
+
+	query := `INSERT INTO borrowing_history (user_id, book_id, borrow_date, status, created_at, updated_at) 
+	          VALUES ($1, $2, NOW(), 'borrowed', NOW(), NOW())`
+	_, err = r.DB.Exec(query, userID, bookID)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.DB.Exec(`UPDATE books SET stock = stock - 1 WHERE id = $1`, bookID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *borrowingRepository) ReturnBook(userID, bookID int) error {
 	query := `UPDATE borrowing_history 
-	          SET return_date = NOW(), status = 'returned', updated_at = NOW() 
-	          WHERE user_id = $1 AND book_id = $2 AND status = 'borrowed'`
+ 	          SET return_date = NOW(), status = 'returned', updated_at = NOW() 
+ 	          WHERE user_id = $1 AND book_id = $2 AND status = 'borrowed'`
 	result, err := r.DB.Exec(query, userID, bookID)
 	if err != nil {
 		return err
@@ -43,14 +62,8 @@ func (r *borrowingRepository) ReturnBook(userID, bookID int) error {
 }
 
 func (r *borrowingRepository) GetBorrowingHistory(userID int) ([]models.BorrowHistory, error) {
-	query := `
-		SELECT bh.id, bh.user_id, b.id AS book_id, b.title, b.author, b.category, b.image_url, 
-			   bh.borrow_date, bh.return_date, bh.status, bh.created_at, bh.updated_at
-		FROM borrowing_history bh
-		JOIN books b ON bh.book_id = b.id
-		WHERE bh.user_id = $1
-	`
-
+	query := `SELECT id, user_id, book_id, borrow_date, return_date, status, created_at, updated_at 
+ 	          FROM borrowing_history WHERE user_id = $1`
 	rows, err := r.DB.Query(query, userID)
 	if err != nil {
 		return nil, err
@@ -60,10 +73,7 @@ func (r *borrowingRepository) GetBorrowingHistory(userID int) ([]models.BorrowHi
 	var history []models.BorrowHistory
 	for rows.Next() {
 		var record models.BorrowHistory
-		err := rows.Scan(
-			&record.ID, &record.UserID, &record.BookID, &record.Title, &record.Author, &record.Category, &record.Image,
-			&record.BorrowDate, &record.ReturnDate, &record.Status, &record.CreatedAt, &record.UpdatedAt,
-		)
+		err := rows.Scan(&record.ID, &record.UserID, &record.BookID, &record.BorrowDate, &record.ReturnDate, &record.Status, &record.CreatedAt, &record.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}

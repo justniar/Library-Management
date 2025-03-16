@@ -17,7 +17,7 @@ func NewBookRepository(db *sql.DB) *BookRepository {
 }
 
 func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
-	query := `SELECT id, title, author, category, stock, image, updated_at, updated_at FROM books WHERE deleted_at IS NULL`
+	query := `SELECT id, title, author, category, stock, image, created_at, updated_at FROM books WHERE deleted_at IS NULL`
 	rows, err := r.DB.Query(query)
 	if err != nil {
 		log.Println("Error fetching books:", err)
