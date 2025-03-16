@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, imageFile: null });
+  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, imageUrl: "" });
 
   useEffect(() => {
     fetchBooks();
@@ -52,10 +52,9 @@ const AdminDashboard = () => {
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("author", formData.author);
-    // formDataToSend.append("category", formData.category);
     formDataToSend.append("stock", formData.stock.toString()); 
     if (formData.imageFile) {
-      formDataToSend.append("imageFile", formData.imageFile);
+      formDataToSend.append("image", formData.imageFile);
     }
   
     try {
@@ -99,7 +98,13 @@ const AdminDashboard = () => {
       {loading && <p className="text-center text-red-900">Loading...</p>}
       {error && <p className="text-center text-red-900">{error}</p>}
       <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4">Tambah Buku</button>
-      <BookModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit} formData={formData} setFormData={setFormData} />
+      <BookModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
+        formData={formData}
+        setFormData={setFormData}
+      />
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl p-6">
         <table className="w-full border-collapse">
           <thead>
@@ -121,7 +126,7 @@ const AdminDashboard = () => {
                 <td className="p-3">{book.author}</td>
                 <td className="p-3">{book.category}</td>
                 <td className="p-3 text-center">{book.stock}</td>
-                <td className="p-3 text-center"><img src={book.image_url} alt={book.title} className="w-16 h-16 object-cover mx-auto" /></td>
+                <td className="p-3 text-center"><img src={book.imageUrl} alt={book.title} className="w-16 h-16 object-cover mx-auto" /></td>
                 <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
                   <button onClick={() => handleEdit(book)}><MdEdit />
                   </button>

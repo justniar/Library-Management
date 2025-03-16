@@ -1,12 +1,17 @@
 export interface BookProps {
     id: number;
-    image_url: string;
-    imageFile?: null;
     title: string;
     author: string;
+    category: string;
+    imageUrl?: string;
     stock: number;
-    category?: string;
-    // onBorrow: ()=>void;
+    publisher?: string;
+    publication_year?: number;
+    pages?: number;
+    language?: string;
+    description?: string;
+    isbn?: string;
+    imageFile?: File | null;
 }
 
 export interface BorrowedBook {

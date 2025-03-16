@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -56,17 +57,34 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 
 	file, err := c.FormFile("image")
 	if err != nil {
+		log.Println("Error retrieving file:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to upload image"})
 		return
+	}
+
+	log.Println("Received file:", file.Filename)
+
+	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
+		err := os.Mkdir("uploads", os.ModePerm)
+		if err != nil {
+			log.Println("Failed to create directory:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create upload directory"})
+			return
+		}
 	}
 
 	uniqueFilename := fmt.Sprintf("%d-%s", time.Now().UnixNano(), file.Filename)
 	filePath := filepath.Join("uploads", uniqueFilename)
 
+	log.Println("Saving file to:", filePath)
+
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		log.Println("Failed to save file:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
 		return
 	}
+
+	log.Println("File saved successfully!")
 
 	book.Title = c.PostForm("title")
 	book.Author = c.PostForm("author")
@@ -75,6 +93,7 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 
 	publicationYear, err := strconv.Atoi(c.PostForm("publication_year"))
 	if err != nil {
+		log.Println("Invalid publication year:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid publication year"})
 		return
 	}
@@ -82,6 +101,7 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 
 	pages, err := strconv.Atoi(c.PostForm("pages"))
 	if err != nil {
+		log.Println("Invalid page count:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page count"})
 		return
 	}
@@ -93,17 +113,23 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 
 	stock, err := strconv.Atoi(c.PostForm("stock"))
 	if err != nil {
+		log.Println("Invalid stock value:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stock value"})
 		return
 	}
 	book.Stock = stock
 	book.Image = filePath
 
+	log.Println("Saving book to database...")
+
 	bookID, err := h.BookService.AddBook(book)
 	if err != nil {
+		log.Println("Error adding book:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add book"})
 		return
 	}
+
+	log.Println("Book added successfully with ID:", bookID)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Book added successfully",
