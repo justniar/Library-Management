@@ -11,9 +11,23 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, image: "" });
+  const [formData, setFormData] = useState<BookProps>({
+    id: 0,
+    title: "",
+    author: "",
+    category: "",
+    stock: 0,
+    publisher: "",
+    publication_year: 0,
+    pages: 0,
+    language: "",
+    description: "",
+    isbn: "",
+    image:"",
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 8
+  const [isEdit, setIsEdit] = useState(false); 
 
   useEffect(() => {
     fetchBooks();
@@ -37,40 +51,74 @@ const AdminDashboard = () => {
   const endIndex = startIndex + booksPerPage;
   const displayedBooks = books.slice(startIndex, endIndex);
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+    
+  //   const formDataToSend = new FormData();
+  //   formDataToSend.append("title", formData.title);
+  //   formDataToSend.append("author", formData.author);
+  //   formDataToSend.append("stock", formData.stock.toString()); 
+  //   if (formData.imageFile) {
+  //     formDataToSend.append("image", formData.imageFile);
+  //   }
+  
+  //   try {
+  //     const response = await fetch("http://localhost:8080/api/books", {
+  //       method: "POST",
+  //       body: formDataToSend,
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error("Failed to upload book");
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log("Success:", data);
+  //     setIsModalOpen(false);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("author", formData.author);
-    formDataToSend.append("stock", formData.stock.toString()); 
-    if (formData.imageFile) {
-      formDataToSend.append("image", formData.imageFile);
-    }
-  
     try {
-      const response = await fetch("http://localhost:8080/api/books", {
-        method: "POST",
-        body: formDataToSend,
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to upload book");
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("author", formData.author);
+      formDataToSend.append("stock", formData.stock.toString());
+      if (formData.imageFile) {
+        formDataToSend.append("image", formData.imageFile);
       }
   
-      const data = await response.json();
-      console.log("Success:", data);
+      const url = isEdit
+        ? `http://localhost:8080/api/books/${formData.id}`
+        : "http://localhost:8080/api/books";
+  
+      const method = isEdit ? "PUT" : "POST";
+  
+      const response = await fetch(url, { method, body: formDataToSend });
+  
+      if (!response.ok) {
+        throw new Error(isEdit ? "Failed to update book" : "Failed to add book");
+      }
+  
+      alert(isEdit ? "Book updated successfully!" : "Book added successfully!");
       setIsModalOpen(false);
+      fetchBooks();
     } catch (error) {
       console.error("Error:", error);
+      alert("Failed to save book");
     }
   };
   
 
   const handleEdit = (book: BookProps) => {
     setFormData(book);
+    setIsEdit(true);
     setIsModalOpen(true);
   };
+  
 
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin ingin menghapus buku ini?")) return;
@@ -95,6 +143,7 @@ const AdminDashboard = () => {
         onSubmit={handleSubmit}
         formData={formData}
         setFormData={setFormData}
+        isEdit={isEdit}
       />
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl p-6">
         <table className="w-full border-collapse">

@@ -7,9 +7,10 @@ interface BookModalProps {
   onSubmit: (e: React.FormEvent) => Promise<void>;
   formData: BookProps;
   setFormData: React.Dispatch<React.SetStateAction<BookProps>>;
+  isEdit: boolean;
 }
 
-const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formData, setFormData }) => {
+const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formData, setFormData, isEdit }) => {
   if (!isOpen) return null;  
   
   const [preview, setPreview] = useState<string | null>(null);
@@ -30,67 +31,74 @@ const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formDa
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("title", formData.title);
-      formDataToSend.append("author", formData.author);
-      formDataToSend.append("category", formData.category || "");
-      formDataToSend.append("stock", String(formData.stock));
-      formDataToSend.append("publisher", formData.publisher || "");
-      formDataToSend.append("publication_year", String(formData.publication_year));
-      formDataToSend.append("pages", String(formData.pages));
-      formDataToSend.append("language", formData.language || "");
-      formDataToSend.append("description", formData.description || "");
-      formDataToSend.append("isbn", formData.isbn || "");
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const formDataToSend = new FormData();
+  //     formDataToSend.append("title", formData.title);
+  //     formDataToSend.append("author", formData.author);
+  //     formDataToSend.append("category", formData.category || "");
+  //     formDataToSend.append("stock", String(formData.stock));
+  //     formDataToSend.append("publisher", formData.publisher || "");
+  //     formDataToSend.append("publication_year", String(formData.publication_year));
+  //     formDataToSend.append("pages", String(formData.pages));
+  //     formDataToSend.append("language", formData.language || "");
+  //     formDataToSend.append("description", formData.description || "");
+  //     formDataToSend.append("isbn", formData.isbn || "");
 
-      if (formData.imageFile) {
-        formDataToSend.append("image", formData.imageFile);
-      }
+  //     if (formData.imageFile) {
+  //       formDataToSend.append("image", formData.imageFile);
+  //     }
 
-      const response = await fetch("http://localhost:8080/books", {
-        method: "POST",
-        body: formDataToSend,
-      });
+  //     const url = isEdit 
+  //       ? `http://localhost:8080/api/books/${formData.id}` 
+  //       : "http://localhost:8080/api/books"; 
+  //     const method = formData.id === 0 ? "POST" : "PUT"; 
 
-      if (!response.ok) {
-        throw new Error("Failed to add book");
-      }
+  //     const response = await fetch(url, {
+  //       method,
+  //       body: formDataToSend,
+  //     });
 
-      alert("Book added successfully!");
-      onClose();
-    } catch (error) {
-      console.error("Error adding book:", error);
-      alert("Failed to add book");
-    }
-  };
+  //     if (!response.ok) {
+  //       throw new Error(isEdit ? "Failed to edit book" : "Failed to add book");
+  //     }
+
+  //     alert(isEdit ? "Book updated successfully!" : "Book added successfully!");
+  //     onClose();
+  //   } catch (error) {
+  //     console.error("Error adding book:", error);
+  //     alert("Failed to add book");
+  //   }
+  // };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20">
       <div className="h-5/6 bg-white p-6 rounded-lg shadow-lg w-[600px] overflow-auto">
-        <h2 className="text-xl text-red-900 font-bold mb-4 text-center">Add New Book</h2>
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
+        <h2 className="text-xl text-red-900 font-bold mb-4 text-center">
+          {isEdit ? "Edit Book" : "Add New Book"}
+        </h2>        
+        <form onSubmit={onSubmit} className="w-full space-y-4">
           <div className="w-full flex justify-between gap-1">
-            <input type="text" name="title" placeholder="Title" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" required />
-            <input type="text" name="author" placeholder="Author" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" required />
+            <input type="text" value={formData.title} name="title" placeholder="Title" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" required />
+            <input type="text" value={formData.author} name="author" placeholder="Author" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" required />
           </div>
           <div className="w-full flex justify-between gap-1">
-            <input type="text" name="category" placeholder="Category" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
-            <input type="number" name="stock" placeholder="Stock" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="text" value={formData.category} name="category" placeholder="Category" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="number" value={formData.stock} name="stock" placeholder="Stock" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
           </div>
           <div className="w-full flex justify-between gap-1">
-            <input type="text" name="publisher" placeholder="Publisher" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
-            <input type="number" name="publication_year" placeholder="Year" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="text" value={formData.publisher} name="publisher" placeholder="Publisher" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="number" value={formData.publication_year} name="publication_year" placeholder="Year" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
           </div>
           <div className="w-full flex justify-between gap-1">
-            <input type="number" name="pages" placeholder="Pages" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
-            <input type="text" name="language" placeholder="Language" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="number" value={formData.pages} name="pages" placeholder="Pages" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="text" value={formData.language} name="language" placeholder="Language" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
           </div>
-          <textarea name="description" placeholder="Description" onChange={handleChange} className="w-full h-50 p-1 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"></textarea>
-          <input type="text" name="isbn" placeholder="ISBN" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+          <textarea name="description" value={formData.description} placeholder="Description" onChange={handleChange} className="w-full h-50 p-1 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"></textarea>
+          <input type="text" value={formData.isbn} name="isbn" placeholder="ISBN" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
 
           <div className="flex items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -108,7 +116,9 @@ const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formDa
 
           <div className="flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-red-900 text-white rounded">Add Book</button>
+            <button type="submit" className="px-4 py-2 bg-red-900 text-white rounded">
+              {isEdit ? "Update Book" : "Add Book"}
+            </button>          
           </div>
         </form>
       </div>
