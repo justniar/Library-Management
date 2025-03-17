@@ -1,5 +1,6 @@
 "use client";
 
+import Pagination from "@/components/atom/pagination";
 import BookModal from "@/components/organism/book/BookModal";
 import { BookProps } from "@/utils/types";
 import { useEffect, useState } from "react";
@@ -117,7 +118,7 @@ const AdminDashboard = () => {
                   <td className="p-3">{book.category}</td>
                   <td className="p-3 text-center">{book.stock}</td>
                   <td className="p-3 text-center">
-                    <img src={book.image} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
+                    <img src={book.image.startsWith("http") ? book.image : `http://localhost:8080/${book.image.replace(/\\/g, "/")}`} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
                   </td>
                   <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
                     <button onClick={() => handleEdit(book)}>
@@ -131,8 +132,12 @@ const AdminDashboard = () => {
               ))
             )}
           </tbody>
-
         </table>
+        <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(books.length / booksPerPage)}
+            onPageChange={(page: number) => setCurrentPage(page)}
+        />
       </div>
     </div>
   );

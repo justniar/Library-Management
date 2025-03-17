@@ -11,20 +11,6 @@ interface BookModalProps {
 
 const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formData, setFormData }) => {
   if (!isOpen) return null;  
-  // const [formData, setFormData] = useState<BookProps>({
-  //   id: 0,
-  //   title: "",
-  //   author: "",
-  //   category: "",
-  //   imageFile: undefined,
-  //   stock: 0,
-  //   publisher: "",
-  //   publication_year: new Date().getFullYear(),
-  //   pages: 0,
-  //   language: "",
-  //   description: "",
-  //   isbn: "",
-  // });
   
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -83,20 +69,28 @@ const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formDa
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
-        <h2 className="text-xl font-bold mb-4">Add New Book</h2>
-        <form onSubmit={handleSubmit} className="w-full space-y-4 grid-cols-2 gap-2">
-          <input type="text" name="title" placeholder="Title" onChange={handleChange} className="w-full p-2 border rounded" required />
-          <input type="text" name="author" placeholder="Author" onChange={handleChange} className="w-full p-2 border rounded" required />
-          <input type="text" name="category" placeholder="Category" onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="number" name="stock" placeholder="Stock" onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="text" name="publisher" placeholder="Publisher" onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="number" name="publication_year" placeholder="Year" onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="number" name="pages" placeholder="Pages" onChange={handleChange} className="w-full p-2 border rounded" />
-          <input type="text" name="language" placeholder="Language" onChange={handleChange} className="w-full p-2 border rounded" />
-          <textarea name="description" placeholder="Description" onChange={handleChange} className="w-full p-2 border rounded"></textarea>
-          <input type="text" name="isbn" placeholder="ISBN" onChange={handleChange} className="w-full p-2 border rounded" />
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-20">
+      <div className="h-5/6 bg-white p-6 rounded-lg shadow-lg w-[600px] overflow-auto">
+        <h2 className="text-xl text-red-900 font-bold mb-4 text-center">Add New Book</h2>
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          <div className="w-full flex justify-between gap-1">
+            <input type="text" name="title" placeholder="Title" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" required />
+            <input type="text" name="author" placeholder="Author" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" required />
+          </div>
+          <div className="w-full flex justify-between gap-1">
+            <input type="text" name="category" placeholder="Category" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="number" name="stock" placeholder="Stock" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+          </div>
+          <div className="w-full flex justify-between gap-1">
+            <input type="text" name="publisher" placeholder="Publisher" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="number" name="publication_year" placeholder="Year" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+          </div>
+          <div className="w-full flex justify-between gap-1">
+            <input type="number" name="pages" placeholder="Pages" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+            <input type="text" name="language" placeholder="Language" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
+          </div>
+          <textarea name="description" placeholder="Description" onChange={handleChange} className="w-full h-50 p-1 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"></textarea>
+          <input type="text" name="isbn" placeholder="ISBN" onChange={handleChange} className="w-full p-2 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" />
 
           <div className="flex items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -114,7 +108,7 @@ const BookModal: React.FC<BookModalProps> = ({ isOpen, onClose, onSubmit, formDa
 
           <div className="flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">Add Book</button>
+            <button type="submit" className="px-4 py-2 bg-red-900 text-white rounded">Add Book</button>
           </div>
         </form>
       </div>
