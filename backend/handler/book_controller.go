@@ -28,13 +28,8 @@ func (h *BookHandler) GetAllBooks(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get books"})
 		return
 	}
-
-	totalPages := (totalBooks + limit - 1) / limit
-
 	c.JSON(http.StatusOK, gin.H{
-		"books":      books,
-		"totalBooks": totalBooks,
-		"totalPages": totalPages,
+		"books": books,
 	})
 }
 

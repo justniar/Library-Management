@@ -2,7 +2,7 @@ export interface BookProps {
     id: number;
     title: string;
     author: string;
-    category: string;
+    category?: string;
     imageUrl?: string;
     stock: number;
     publisher?: string;
@@ -12,6 +12,7 @@ export interface BookProps {
     description?: string;
     isbn?: string;
     imageFile?: File | null;
+    image: string;
 }
 
 export interface BorrowedBook {

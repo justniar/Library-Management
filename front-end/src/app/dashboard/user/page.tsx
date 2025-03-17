@@ -10,33 +10,38 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [page, setPage] = useState(1);
-  const limit = 8; 
-  const [totalPages, setTotalPages] = useState(1);
+  const booksPerPage = 8
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/books?page=${page}&limit=${limit}`);
+        const response = await fetch(`http://localhost:8080/books`);
         if (!response.ok) {
           throw new Error("Failed to fetch books");
         }
         const data = await response.json();
-        setBooks(data);
-        setTotalPages(data.totalPages);
+  
+        console.log("Fetched data:", data);
+  
+        if (!Array.isArray(data.books)) {
+          throw new Error("API response does not contain a books array");
+        }
+  
+        setBooks(data.books); 
       } catch (error: any) {
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchBooks();
-  }, [page]);
+  }, []);  
+  
 
-  // const startIndex = (currentPage - 1) * booksPerPage;
-  // const endIndex = startIndex + booksPerPage;
-  // const displayedBooks = books.slice(startIndex, endIndex);
+  const startIndex = (currentPage - 1) * booksPerPage;
+  const endIndex = startIndex + booksPerPage;
+  const displayedBooks = books.slice(startIndex, endIndex);
 
   return (
       <div className="w-full flex flex-col z-0">
@@ -47,11 +52,11 @@ export default function Home() {
           ) : error ? (
             <p>{error}</p>
           ): (
-            books.map((book)=>(
+            displayedBooks.map((book)=>(
               <CardBook 
                 key={book.id}
                 id={book.id}
-                imageUrl={book.imageUrl}
+                image={book.image}
                 title={book.title}
                 author={book.author}
                 stock={book.stock}
@@ -61,8 +66,7 @@ export default function Home() {
         </div>
         <Pagination 
           currentPage={currentPage}
-          // totalPages={Math.ceil(books.length / booksPerPage)}
-          totalPages={totalPages}
+          totalPages={Math.ceil(books.length / booksPerPage)}
           onPageChange={(page: number) => setCurrentPage(page)}
         />
       </div>

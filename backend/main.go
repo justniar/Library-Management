@@ -32,6 +32,8 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	r.Static("/uploads", "./uploads")
+
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)
 
