@@ -11,6 +11,8 @@ const AdminDashboard = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, image: "" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 8
 
   useEffect(() => {
     fetchBooks();
@@ -20,8 +22,9 @@ const AdminDashboard = () => {
     try {
       const response = await fetch("http://localhost:8080/books");
       if (!response.ok) throw new Error("Failed to fetch books");
-      const data: BookProps[] = await response.json();
-      setBooks(data);
+      const data = await response.json();
+      setBooks(data.books);
+      console.log(data);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -29,22 +32,9 @@ const AdminDashboard = () => {
     }
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const formDataToSend = new FormData();
-  //   if (formData.image_url) formDataToSend.append("image", formData.image_url);
-  //   try {
-  //     const method = formData.id ? "PUT" : "POST";
-  //     const url = formData.id ? `http://localhost:8080/books/${formData.id}` : "http://localhost:8080/books";
-  //     const response = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
-  //     if (!response.ok) throw new Error("Failed to save book");
-  //     fetchBooks();
-  //     setIsModalOpen(false);
-  //     setFormData({ id: 0, title: "", author: "", category: "", stock: 1, image_url: null });
-  //   } catch (error: any) {
-  //     setError(error.message);
-  //   }
-  // };
+  const startIndex = (currentPage - 1) * booksPerPage;
+  const endIndex = startIndex + booksPerPage;
+  const displayedBooks = books.slice(startIndex, endIndex);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,23 +109,29 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {books.map((book, index) => (
-              <tr key={book.id} className="hover:bg-amber-100">
-                <td className="p-3 text-center">{index + 1}</td>
-                <td className="p-3">{book.title}</td>
-                <td className="p-3">{book.author}</td>
-                <td className="p-3">{book.category}</td>
-                <td className="p-3 text-center">{book.stock}</td>
-                <td className="p-3 text-center"><img src={book.imageUrl} alt={book.title} className="w-16 h-16 object-cover mx-auto" /></td>
-                <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
-                  <button onClick={() => handleEdit(book)}><MdEdit />
-                  </button>
-                  <button onClick={() => handleDelete(book.id)}><MdOutlineDeleteOutline />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {(displayedBooks.map((book, index) => (
+                <tr key={book.id} className="hover:bg-amber-100">
+                  <td className="p-3 text-center">{index + 1}</td>
+                  <td className="p-3">{book.title}</td>
+                  <td className="p-3">{book.author}</td>
+                  <td className="p-3">{book.category}</td>
+                  <td className="p-3 text-center">{book.stock}</td>
+                  <td className="p-3 text-center">
+                    <img src={book.image} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
+                  </td>
+                  <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
+                    <button onClick={() => handleEdit(book)}>
+                      <MdEdit />
+                    </button>
+                    <button onClick={() => handleDelete(book.id)}>
+                      <MdOutlineDeleteOutline />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
+
         </table>
       </div>
     </div>

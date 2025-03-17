@@ -37,9 +37,14 @@ type SidebarItemProps = {
 };
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ to, icon, text, isOpen }) => (
-  <li className="flex items-center p-3 hover:bg-red-900 hover:text-amber-50 rounded-lg transition-all">
-    {icon}
-    {isOpen && <Link href={to} className="ml-3 text-lg">{text}</Link>}
+  <li>
+    <Link 
+      href={to} 
+      className="flex items-center p-3 hover:bg-red-900 hover:text-amber-50 rounded-lg transition-all"
+    >
+      {icon}
+      {isOpen && <span className="ml-3 text-lg">{text}</span>}
+    </Link>
   </li>
 );
 
