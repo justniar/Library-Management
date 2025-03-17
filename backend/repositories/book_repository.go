@@ -35,7 +35,15 @@ func (r *BookRepository) GetAllBooks(limit, offset int) ([]models.Book, error) {
 		}
 		books = append(books, book)
 	}
-	return books, nil
+
+	var total int
+	err = r.DB.QueryRow("SELECT COUNT(*) FROM books WHERE deleted_at IS NULL").Scan(&total)
+	if err != nil {
+		log.Println("Error fetching total count:", err)
+		return nil, 0, err
+	}
+
+	return books, total, nil
 }
 
 func (r *BookRepository) GetBookDetails(bookID int) (*models.Book, error) {

@@ -11,6 +11,9 @@ const AdminDashboard = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<BookProps>({ id: 0, title: "", author: "", category: "", stock: 1, image: "" });
+  const [page, setPage] = useState(1);
+  const limit = 8; // Always fetch 8 books per page
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     fetchBooks();

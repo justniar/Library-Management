@@ -13,7 +13,7 @@ func NewBookService(bookRepo *repositories.BookRepository) *BookService {
 	return &BookService{BookRepo: bookRepo}
 }
 
-func (s *BookService) GetAllBooks(limit, offset int) ([]models.Book, error) {
+func (s *BookService) GetAllBooks(limit, offset int) ([]models.Book, int, error) {
 	return s.BookRepo.GetAllBooks(limit, offset)
 }
 

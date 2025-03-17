@@ -10,17 +10,20 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 8;
+  const [page, setPage] = useState(1);
+  const limit = 8; 
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://localhost:8080/books");
+        const response = await fetch(`http://localhost:8080/books?page=${page}&limit=${limit}`);
         if (!response.ok) {
           throw new Error("Failed to fetch books");
         }
         const data = await response.json();
         setBooks(data);
+        setTotalPages(data.totalPages);
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -29,11 +32,11 @@ export default function Home() {
     };
 
     fetchBooks();
-  }, []);
+  }, [page]);
 
-  const startIndex = (currentPage - 1) * booksPerPage;
-  const endIndex = startIndex + booksPerPage;
-  const displayedBooks = books.slice(startIndex, endIndex);
+  // const startIndex = (currentPage - 1) * booksPerPage;
+  // const endIndex = startIndex + booksPerPage;
+  // const displayedBooks = books.slice(startIndex, endIndex);
 
   return (
       <div className="w-full flex flex-col z-0">
@@ -43,8 +46,8 @@ export default function Home() {
             <p>Loading books</p>
           ) : error ? (
             <p>{error}</p>
-          ): displayedBooks.length > 0 ? (
-            displayedBooks.map((book)=>(
+          ): (
+            books.map((book)=>(
               <CardBook 
                 key={book.id}
                 id={book.id}
@@ -54,11 +57,12 @@ export default function Home() {
                 stock={book.stock}
               />
             ))
-          ) : (<p>no books available</p>)}
+          )}
         </div>
         <Pagination 
           currentPage={currentPage}
-          totalPages={Math.ceil(books.length / booksPerPage)}
+          // totalPages={Math.ceil(books.length / booksPerPage)}
+          totalPages={totalPages}
           onPageChange={(page: number) => setCurrentPage(page)}
         />
       </div>
