@@ -22,10 +22,10 @@ export interface BorrowedBook {
     title: string;
     author: string;
     category: string;
-    image_url: string;
+    image: string;
     description: string;
     synopsis: string;
-    borrowedDate: string;
+    borrow_date: string;
     returnDate?: string | null;
     status: string;
   }

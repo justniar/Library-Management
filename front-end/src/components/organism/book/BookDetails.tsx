@@ -50,7 +50,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book, onReturn  }) => {
             <div className="w-full h-[460px] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
               <img
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                src={book.image_url}
+                src={book.image.startsWith("http") ? book.image : `http://localhost:8080/${book.image.replace(/\\/g, "/")}`}
                 alt={book.title}
               />
             </div>
@@ -85,10 +85,10 @@ const BookDetails: React.FC<BookDetailsProps> = ({ book, onReturn  }) => {
                     <strong className="font-semibold">Category:</strong> {book.category}
                   </p>
                   <p>
-                    <strong className="font-semibold">Borrowed:</strong> {book.borrowedDate}
+                    <strong className="font-semibold">Borrowed:</strong> {book.borrow_date}
                   </p>
                   <p>
-                    <strong className="font-semibold">Return:</strong> {book.returnDate || "Not Available"}
+                    <strong className="font-semibold">Return:</strong> {book.return_date || "Not Available"}
                   </p>
                   <p>
                     <strong className="font-semibold">Status:</strong>{" "}

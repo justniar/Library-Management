@@ -17,12 +17,13 @@ export default function BorrowedBooks() {
         if (!response.ok) throw new Error("Failed to fetch borrowed books");
         
         const data = await response.json();
+        console.log("Fetched data:", data);
         const filteredBooks = data
           .filter((book: BorrowedBook) => book.status !== "returned")
           .map((book: BorrowedBook) => ({
             ...book,
-            returnDate: book.returnDate ? new Date(book.returnDate).toLocaleDateString() : "Not Available",
-            borrowedDate: new Date(book.borrowedDate).toLocaleDateString(),
+            returnDate: book.return_date ? new Date(book.return_date).toLocaleDateString() : "Not Available",
+            borrowedDate: new Date(book.borrow_date).toLocaleDateString(),
           }));
 
         setBooks(filteredBooks);
@@ -63,7 +64,7 @@ export default function BorrowedBooks() {
   return (
     <div className="flex flex-col md:flex-row gap-6 p-1 overflow-y-hidden">
       <div className="md:w-1/3 h-[100vh] bg-white shadow-lg rounded-lg p-5 overflow-y-auto">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">📚 Borrowed Books</h2>
+        <h2 className="text-2xl font-semibold text-red-900 mb-4"> Borrowed Books</h2>
         <ul className="space-y-3">
           {books.map((book) => (
             <li
