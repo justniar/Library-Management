@@ -2,8 +2,8 @@ export interface BookProps {
     id: number;
     title: string;
     author: string;
-    category?: string;
-    image?: string;
+    category: string;
+    imageUrl?: string;
     stock: number;
     publisher?: string;
     publication_year?: number;

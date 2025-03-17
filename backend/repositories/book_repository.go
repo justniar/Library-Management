@@ -16,9 +16,9 @@ func NewBookRepository(db *sql.DB) *BookRepository {
 	return &BookRepository{DB: db}
 }
 
-func (r *BookRepository) GetAllBooks(limit, offset int) ([]models.Book, error) {
-	query := `SELECT id, title, author, category, stock, image, created_at, updated_at FROM books WHERE deleted_at IS NULL LIMIT $1 OFFSET $2`
-	rows, err := r.DB.Query(query, limit, offset)
+func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
+	query := `SELECT id, title, author, category, stock, image, created_at, updated_at FROM books WHERE deleted_at IS NULL`
+	rows, err := r.DB.Query(query)
 	if err != nil {
 		log.Println("Error fetching books:", err)
 		return nil, err
