@@ -7,7 +7,7 @@ export interface BookProps {
     stock: number;
     publisher?: string;
     publication_year?: number;
-    pages?: number;
+    pages: number;
     language?: string;
     description?: string;
     isbn?: string;
@@ -26,7 +26,7 @@ export interface BorrowedBook {
     description: string;
     synopsis: string;
     borrow_date: string;
-    returnDate?: string | null;
+    return_date?: string | null;
     status: string;
   }
   

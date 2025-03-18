@@ -12,7 +12,7 @@ const AdminDashboard = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<BookProps>({
-    id: 0,
+    id:0,
     title: "",
     author: "",
     category: "",
@@ -25,6 +25,7 @@ const AdminDashboard = () => {
     isbn: "",
     image:"",
   });
+  
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 8
   const [isEdit, setIsEdit] = useState(false); 
@@ -38,7 +39,8 @@ const AdminDashboard = () => {
       const response = await fetch("http://localhost:8080/books");
       if (!response.ok) throw new Error("Failed to fetch books");
       const data = await response.json();
-      setBooks(data.books);
+      const sortedBooks = [...data.books].sort((a, b) => b.id - a.id);
+      setBooks(sortedBooks);
       console.log(data);
     } catch (error: any) {
       setError(error.message);
@@ -51,51 +53,30 @@ const AdminDashboard = () => {
   const endIndex = startIndex + booksPerPage;
   const displayedBooks = books.slice(startIndex, endIndex);
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-    
-  //   const formDataToSend = new FormData();
-  //   formDataToSend.append("title", formData.title);
-  //   formDataToSend.append("author", formData.author);
-  //   formDataToSend.append("stock", formData.stock.toString()); 
-  //   if (formData.imageFile) {
-  //     formDataToSend.append("image", formData.imageFile);
-  //   }
-  
-  //   try {
-  //     const response = await fetch("http://localhost:8080/api/books", {
-  //       method: "POST",
-  //       body: formDataToSend,
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error("Failed to upload book");
-  //     }
-  
-  //     const data = await response.json();
-  //     console.log("Success:", data);
-  //     setIsModalOpen(false);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      const formDataToSend = new FormData();
+      const formDataToSend : any = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("author", formData.author);
+      formDataToSend.append("category", formData.category || "");
       formDataToSend.append("stock", formData.stock.toString());
+      formDataToSend.append("publisher", formData.publisher || "");
+      formDataToSend.append("publication_year", String(formData.publication_year) );
+      formDataToSend.append("language", formData.language || "");
+      formDataToSend.append("pages", String(formData.pages));
+      formDataToSend.append("description", formData.description || "" );
+      formDataToSend.append("isbn", String(formData.isbn));
       if (formData.imageFile) {
         formDataToSend.append("image", formData.imageFile);
       }
   
       const url = isEdit
         ? `http://localhost:8080/books/${formData.id}`
-        : "http://localhost:8080/api/books";
+        : "http://localhost:8080/books";
   
-      const method = isEdit ? "PUT" : "POST";
+      const method = isEdit ? "PATCH" : "POST";
   
       const response = await fetch(url, { method, body: formDataToSend });
   

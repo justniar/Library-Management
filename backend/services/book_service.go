@@ -25,8 +25,11 @@ func (s *BookService) AddBook(book models.Book) (int, error) {
 	return s.BookRepo.AddBook(book)
 }
 
-func (s *BookService) UpdateBook(book models.Book) error {
-	return s.BookRepo.UpdateBook(book)
+//	func (s *BookService) UpdateBook(book models.Book) error {
+//		return s.BookRepo.UpdateBook(book)
+//	}
+func (s *BookService) UpdateBook(id int, updates map[string]interface{}) error {
+	return s.BookRepo.UpdateBook(id, updates)
 }
 
 func (s *BookService) DeleteBook(bookID int) error {
