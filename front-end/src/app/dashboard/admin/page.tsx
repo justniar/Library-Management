@@ -92,7 +92,7 @@ const AdminDashboard = () => {
       }
   
       const url = isEdit
-        ? `http://localhost:8080/api/books/${formData.id}`
+        ? `http://localhost:8080/books/${formData.id}`
         : "http://localhost:8080/api/books";
   
       const method = isEdit ? "PUT" : "POST";
