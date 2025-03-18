@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     language: "",
     description: "",
     isbn: "",
-    image:"",
+    image:"null",
   });
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,22 +76,49 @@ const AdminDashboard = () => {
         ? `http://localhost:8080/books/${formData.id}`
         : "http://localhost:8080/books";
   
-      const method = isEdit ? "PATCH" : "POST";
+      const method = isEdit ? "PUT" : "POST";
   
+      console.log("Updating book with ID:", formData.id);
+      console.log("FormData Sent:", [...formDataToSend.entries()]);
+      
       const response = await fetch(url, { method, body: formDataToSend });
   
       if (!response.ok) {
         throw new Error(isEdit ? "Failed to update book" : "Failed to add book");
       }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server Error Response:", errorText);
+        throw new Error(`Failed: ${response.status} - ${errorText}`);
+      }
   
       alert(isEdit ? "Book updated successfully!" : "Book added successfully!");
+      
       setIsModalOpen(false);
+      setFormData({
+        id: 0,
+        title: "",
+        author: "",
+        category: "",
+        stock: 0,
+        publisher: "",
+        publication_year: 0,
+        pages: 0,
+        language: "",
+        description: "",
+        isbn: "",
+        image: "",
+      });
+      setIsEdit(false); 
+      
       fetchBooks();
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to save book");
     }
   };
+  
   
 
   const handleEdit = (book: BookProps) => {

@@ -31,7 +31,7 @@ const CardBook: React.FC<BookProps> = ({ id, image, title, author, stock }) => {
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden w-64 flex flex-col">
       {/* <Image src={image} alt={title} width={100} height={60} className="object-cover"/> */}
-      <img src={image.startsWith("http") ? image : `http://localhost:8080/${image.replace(/\\/g, "/")}`} alt={title} className="w-full h-60 object-cover" />
+      <img src={image?.startsWith("http") ? image : `http://localhost:8080/${image.replace(/\\/g, "/")}`} alt={title} className="w-full h-60 object-cover" />
       <div className="p-4 flex flex-col flex-grow">
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-gray-600 text-sm">By {author}</p>

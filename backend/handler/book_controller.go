@@ -140,7 +140,7 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 }
 
 func (h *BookHandler) UpdateBook(c *gin.Context) {
-	// var book models.Book
+	var book models.Book
 	bookID := c.Param("id")
 
 	id, err := strconv.Atoi(bookID)
@@ -148,19 +148,14 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
 		return
 	}
-	var updates map[string]interface{}
-	if err := c.ShouldBindJSON(&updates); err != nil {
+	book.ID = id
+
+	if err := c.ShouldBindJSON(&book); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// if err := c.ShouldBindJSON(&book); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// // log.Printf("Updating book with ID %d: %+v\n", book.ID, book)
-
-	if err := h.BookService.UpdateBook(id, updates); err != nil {
+	if err := h.BookService.UpdateBook(book); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update book"})
 		return
 	}

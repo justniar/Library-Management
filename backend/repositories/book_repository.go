@@ -4,9 +4,7 @@ import (
 	"backend/models"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -83,41 +81,15 @@ func (r *BookRepository) AddBook(book models.Book) (int, error) {
 	return bookID, nil
 }
 
-// func (r *BookRepository) UpdateBook(book models.Book) error {
-// 	query := `UPDATE books SET title = $1, author = $2, category = $3, stock = $4, image = $5,
-// 	          publisher = $6, publication_year = $7, pages = $8, language = $9,
-// 	          description = $10, isbn = $11, updated_at = NOW()
-// 	          WHERE id = $12 AND deleted_at IS NULL`
+func (r *BookRepository) UpdateBook(book models.Book) error {
+	query := `UPDATE books SET title = $1, author = $2, category = $3, stock = $4, image = $5, 
+	          publisher = $6, publication_year = $7, pages = $8, language = $9, 
+	          description = $10, isbn = $11, updated_at = NOW()
+	          WHERE id = $12 AND deleted_at IS NULL`
 
-// 	_, err := r.DB.Exec(query, book.Title, book.Author, book.Category, book.Stock, book.Image,
-// 		book.Publisher, book.PublicationYear, book.Pages, book.Language, book.Description, book.ISBN, book.ID)
+	_, err := r.DB.Exec(query, book.Title, book.Author, book.Category, book.Stock, book.Image,
+		book.Publisher, book.PublicationYear, book.Pages, book.Language, book.Description, book.ISBN, book.ID)
 
-// 	if err != nil {
-// 		log.Println("Error updating book:", err)
-// 		return err
-// 	}
-
-//		return nil
-//	}
-func (r *BookRepository) UpdateBook(id int, updates map[string]interface{}) error {
-	if len(updates) == 0 {
-		return errors.New("no updates provided")
-	}
-
-	query := "UPDATE books SET "
-	values := []interface{}{}
-	i := 1
-
-	for key, value := range updates {
-		query += fmt.Sprintf("%s = $%d, ", key, i)
-		values = append(values, value)
-		i++
-	}
-
-	query += "updated_at = NOW() WHERE id = $" + strconv.Itoa(i) + " AND deleted_at IS NULL"
-	values = append(values, id)
-
-	_, err := r.DB.Exec(query, values...)
 	if err != nil {
 		log.Println("Error updating book:", err)
 		return err

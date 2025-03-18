@@ -7,12 +7,12 @@ export interface BookProps {
     stock: number;
     publisher?: string;
     publication_year?: number;
-    pages: number;
+    pages?: number;
     language?: string;
     description?: string;
     isbn?: string;
     imageFile?: File | null;
-    image: string;
+    image: null;
 }
 
 export interface BorrowedBook {
