@@ -71,6 +71,7 @@ const AdminDashboard = () => {
       if (formData.imageFile) {
         formDataToSend.append("image", formData.imageFile);
       }
+      // formDataToSend.append("image", formData.imageFile, formData.imageFile.name);
   
       const url = isEdit
         ? `http://localhost:8080/books/${formData.id}`
@@ -81,13 +82,11 @@ const AdminDashboard = () => {
       console.log("Updating book with ID:", formData.id);
       console.log("FormData Sent:", [...formDataToSend.entries()]);
       
-      // const response = await fetch(url, { method, body: formDataToSend });
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
-      
+
       if (!response.ok) {
         throw new Error(isEdit ? "Failed to update book" : "Failed to add book");
       }
@@ -98,6 +97,7 @@ const AdminDashboard = () => {
         throw new Error(`Failed: ${response.status} - ${errorText}`);
       }
   
+      console.log(formData.imageFile);
       alert(isEdit ? "Book updated successfully!" : "Book added successfully!");
       
       setIsModalOpen(false);

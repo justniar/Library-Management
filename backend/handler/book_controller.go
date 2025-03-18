@@ -139,23 +139,130 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 	})
 }
 
-func (h *BookHandler) UpdateBook(c *gin.Context) {
-	var book models.Book
-	bookID := c.Param("id")
+// func (h *BookHandler) UpdateBook(c *gin.Context) {
+// 	var book models.Book
+// 	bookID := c.Param("id")
 
+// 	id, err := strconv.Atoi(bookID)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
+// 		return
+// 	}
+// 	file, err := c.FormFile("image")
+// 	if err == nil {
+// 		log.Println("Updating with new image:", file.Filename)
+
+// 		if _, err := os.Stat("uploads"); os.IsNotExist(err) {
+// 			os.Mkdir("uploads", os.ModePerm)
+// 		}
+
+// 		uniqueFilename := fmt.Sprintf("%d-%s", time.Now().UnixNano(), file.Filename)
+// 		filePath := filepath.Join("uploads", uniqueFilename)
+
+// 		if err := c.SaveUploadedFile(file, filePath); err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+// 			return
+// 		}
+
+// 		oldBook, err := h.BookService.GetBookDetails(id)
+// 		if err == nil && oldBook.Image != "" {
+// 			os.Remove(oldBook.Image)
+// 		}
+
+// 		book.Image = filePath
+// 	}
+
+// 	book.ID = id
+
+// 	if err := c.JSON(&book); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	if err := h.BookService.UpdateBook(book); err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update book"})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"message": "Book updated successfully"})
+// }
+
+func (h *BookHandler) UpdateBook(c *gin.Context) {
+	bookID := c.Param("id")
 	id, err := strconv.Atoi(bookID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
 		return
 	}
-	book.ID = id
 
-	if err := c.ShouldBindJSON(&book); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	oldBook, err := h.BookService.GetBookDetails(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
 	}
 
-	if err := h.BookService.UpdateBook(book); err != nil {
+	book := oldBook
+	book.ID = id
+
+	file, err := c.FormFile("image")
+	if err == nil {
+		log.Println("Updating with new image:", file.Filename)
+
+		if _, err := os.Stat("uploads"); os.IsNotExist(err) {
+			os.Mkdir("uploads", os.ModePerm)
+		}
+
+		uniqueFilename := fmt.Sprintf("%d-%s", time.Now().UnixNano(), file.Filename)
+		filePath := filepath.Join("uploads", uniqueFilename)
+
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+			return
+		}
+
+		if oldBook.Image != "" {
+			os.Remove(oldBook.Image)
+		}
+
+		book.Image = filePath
+	}
+
+	book.Title = c.PostForm("title")
+	book.Author = c.PostForm("author")
+	book.Category = c.PostForm("category")
+	book.Publisher = c.PostForm("publisher")
+	book.Language = c.PostForm("language")
+	book.Description = c.PostForm("description")
+	book.ISBN = c.PostForm("isbn")
+
+	if publicationYearStr := c.PostForm("publication_year"); publicationYearStr != "" {
+		publicationYear, err := strconv.Atoi(publicationYearStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid publication year"})
+			return
+		}
+		book.PublicationYear = publicationYear
+	}
+
+	if pagesStr := c.PostForm("pages"); pagesStr != "" {
+		pages, err := strconv.Atoi(pagesStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page count"})
+			return
+		}
+		book.Pages = pages
+	}
+
+	if stockStr := c.PostForm("stock"); stockStr != "" {
+		stock, err := strconv.Atoi(stockStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stock value"})
+			return
+		}
+		book.Stock = stock
+	}
+
+	if err := h.BookService.UpdateBook(*book); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update book"})
 		return
 	}
