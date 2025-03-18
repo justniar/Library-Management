@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     language: "",
     description: "",
     isbn: "",
-    image:"null",
+    image:"",
   });
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,8 +81,13 @@ const AdminDashboard = () => {
       console.log("Updating book with ID:", formData.id);
       console.log("FormData Sent:", [...formDataToSend.entries()]);
       
-      const response = await fetch(url, { method, body: formDataToSend });
-  
+      // const response = await fetch(url, { method, body: formDataToSend });
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      
       if (!response.ok) {
         throw new Error(isEdit ? "Failed to update book" : "Failed to add book");
       }
@@ -119,7 +124,6 @@ const AdminDashboard = () => {
     }
   };
   
-  
 
   const handleEdit = (book: BookProps) => {
     setFormData(book);
@@ -139,6 +143,26 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setFormData({
+      id: 0,
+      title: "",
+      author: "",
+      category: "",
+      stock: 0,
+      publisher: "",
+      publication_year: 0,
+      pages: 0,
+      language: "",
+      description: "",
+      isbn: "",
+      image: "",
+    });
+    setIsEdit(false);
+  };
+  
+
   return (
     <div className="min-h-screen p-6">
       <h1 className="text-4xl font-bold text-red-900 text-center mb-8">Admin Dashboard - Buku</h1>
@@ -147,7 +171,7 @@ const AdminDashboard = () => {
       <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4">Tambah Buku</button>
       <BookModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleClose}
         onSubmit={handleSubmit}
         formData={formData}
         setFormData={setFormData}
