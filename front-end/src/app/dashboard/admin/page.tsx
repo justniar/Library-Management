@@ -6,6 +6,7 @@ import BookModal from "@/components/organism/book/BookModal";
 import { BookProps } from "@/utils/types";
 import { useEffect, useState } from "react";
 import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
+import { toast, ToastContainer } from "react-toastify";
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState<BookProps[]>([]);
@@ -46,7 +47,7 @@ const AdminDashboard = () => {
       setBooks(sortedBooks);
       console.log(data);
     } catch (error: any) {
-      setError(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -101,7 +102,7 @@ const AdminDashboard = () => {
       }
   
       console.log(formData.imageFile);
-      alert(isEdit ? "Book updated successfully!" : "Book added successfully!");
+      toast.success(isEdit ? "Book updated successfully!" : "Book added successfully!");
       
       setIsModalOpen(false);
       setFormData({
@@ -146,7 +147,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8080/books/${bookToDelete.id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete book");
-      alert("Buku berhasil dihapus!");
+      toast.success("Buku berhasil dihapus!");
       setIsDeleteModalOpen(false);
       fetchBooks(); 
     } catch (error: any) {
@@ -239,6 +240,7 @@ const AdminDashboard = () => {
           onConfirm={confirmDelete} 
           bookTitle={bookToDelete?.title || ""} 
         />
+        <ToastContainer />
       </div>
     </div>
   );

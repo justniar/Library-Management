@@ -17,12 +17,12 @@ const SidebarAdmin= () => {
         <nav className="mt-5">
           <ul>
             <SidebarItem to="/dashboard/admin" icon={<FaHome className="w-6 h-6" />} text="Dashboard" isOpen={isOpen} />
-            <SidebarItem to="/book-borrowed" icon={<FaBook className="w-6 h-6" />} text="Book Borrowed" isOpen={isOpen} />
-            <SidebarItem to="/history-book" icon={<FaHistory className="w-6 h-6" />} text="History" isOpen={isOpen} />
-            <SidebarItem to="/history-user" icon={<FaRegUserCircle className="w-6 h-6" />} text="History" isOpen={isOpen} />
+            {/* <SidebarItem to="/book-borrowed" icon={<FaBook className="w-6 h-6" />} text="Book Borrowed" isOpen={isOpen} /> */}
+            <SidebarItem to="/history-book" icon={<FaHistory className="w-6 h-6" />} text="History Book" isOpen={isOpen} />
+            <SidebarItem to="/history-user" icon={<FaRegUserCircle className="w-6 h-6" />} text="History User" isOpen={isOpen} />
 
             <SidebarItem to="/profile" icon={<FaRegUserCircle className="w-6 h-6" />} text="Profile" isOpen={isOpen} />
-            <SidebarItem to="/settings" icon={<IoMdSettings className="w-6 h-6" />} text="Settings" isOpen={isOpen} />
+            {/* <SidebarItem to="/settings" icon={<IoMdSettings className="w-6 h-6" />} text="Settings" isOpen={isOpen} /> */}
           </ul>
         </nav>
       </div>

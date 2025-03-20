@@ -4,6 +4,7 @@ import CardBook from "@/components/organism/book/CardBook";
 import Hero from "@/components/organism/carrousel/Hero";
 import { BookProps } from "@/utils/types";
 import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   const [books, setBooks] = useState<BookProps[]>([]);
@@ -44,6 +45,7 @@ export default function Home() {
   const displayedBooks = books.slice(startIndex, endIndex);
 
   return (
+    <>
       <div className="w-full flex flex-col z-0">
         <Hero/>
         <div className="flex flex-wrap gap-4 m-4 justify-between">
@@ -70,6 +72,8 @@ export default function Home() {
           onPageChange={(page: number) => setCurrentPage(page)}
         />
       </div>
+      <ToastContainer/>
+      </>
       
   );
 }

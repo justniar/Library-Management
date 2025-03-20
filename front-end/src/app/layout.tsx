@@ -22,11 +22,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   
   const isAuthPage = pathname === "/auth/login" || pathname === "/auth/register";
   const [userRole, setUserRole] = useState<"admin" | "user">("user");
-  const [username, setUsername] = useState("salsabila");
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("userRole") || "user";
-    const storedUser = localStorage.getItem("username") || "salsabila";
+    const storedRole = localStorage.getItem("role") || "user";
+    const storedUser = localStorage.getItem("username") || "";
 
     setUserRole(storedRole as "admin" | "user");
     setUsername(storedUser);

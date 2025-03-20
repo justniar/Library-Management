@@ -21,7 +21,7 @@ const SidebarUser = () => {
             <SidebarItem to="/history" icon={<FaHistory className="w-6 h-6" />} text="History" isOpen={isOpen} />
 
             <SidebarItem to="/profile" icon={<FaRegUserCircle className="w-6 h-6" />} text="Profile" isOpen={isOpen} />
-            <SidebarItem to="/settings" icon={<IoMdSettings className="w-6 h-6" />} text="Settings" isOpen={isOpen} />
+            {/* <SidebarItem to="/settings" icon={<IoMdSettings className="w-6 h-6" />} text="Settings" isOpen={isOpen} /> */}
           </ul>
         </nav>
       </div>
