@@ -45,7 +45,7 @@ const HistoryPage = () => {
     <div className="container mx-auto p-6">
       <h2 className="text-3xl text-red-900 font-bold mb-4 text-center">Borrowed Books</h2>
       <div className="bg-white shadow-md rounded-lg p-4">
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse overflow-x-scroll">
           <thead>
             <tr className="bg-red-900 text-amber-50">
               <th className="p-3 text-left">Book</th>

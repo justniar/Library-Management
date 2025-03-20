@@ -63,7 +63,7 @@ export default function BorrowedBooks() {
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-1 overflow-y-hidden">
-      <div className="md:w-1/3 h-[100vh] bg-white shadow-lg rounded-lg p-5 overflow-y-auto">
+      <div className="md:w-1/3 h-auto md:h-[100vh] bg-white shadow-lg rounded-lg p-5 overflow-y-auto">
         <h2 className="text-2xl font-semibold text-red-900 mb-4"> Borrowed Books</h2>
         <ul className="space-y-3">
           {books.map((book) => (

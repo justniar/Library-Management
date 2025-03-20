@@ -1,12 +1,25 @@
 'use client'
 import Link from "next/link";
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { FaBars, FaBook, FaHistory, FaHome, FaRegUserCircle } from "react-icons/fa";
-import { IoMdSettings } from "react-icons/io";
+// import { IoMdSettings } from "react-icons/io";
 
 const SidebarUser = () => {
   const [isOpen, setIsOpen] = useState(true);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsOpen(false); 
+      } else {
+        setIsOpen(true); 
+      }
+    };
 
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <div className="flex z-10 shadow-md">
       <div className={`h-screen ${isOpen ? "w-64" : "w-20"} bg-amber-50 text-red-900 p-5 transition-all duration-300`}>
