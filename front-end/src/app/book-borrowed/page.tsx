@@ -69,7 +69,7 @@ export default function BorrowedBooks() {
           {books.map((book) => (
             <li
               key={book.id}
-              className={`p-4 border rounded-lg shadow-md transition-all duration-300 cursor-pointer 
+              className={`p-4 rounded-lg shadow-md transition-all duration-300 cursor-pointer 
                 ${
                   selectedBook?.id === book.id
                     ? "bg-red-100 border-red-400"

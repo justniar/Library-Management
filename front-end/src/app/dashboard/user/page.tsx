@@ -4,7 +4,6 @@ import CardBook from "@/components/organism/book/CardBook";
 import Hero from "@/components/organism/carrousel/Hero";
 import { BookProps } from "@/utils/types";
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   const [books, setBooks] = useState<BookProps[]>([]);
@@ -21,6 +20,8 @@ export default function Home() {
           throw new Error("Failed to fetch books");
         }
         const data = await response.json();
+        const sortedBooks = [...data.books].sort((a, b) => b.id - a.id);
+        setBooks(sortedBooks);
   
         console.log("Fetched data:", data);
   
@@ -28,7 +29,7 @@ export default function Home() {
           throw new Error("API response does not contain a books array");
         }
   
-        setBooks(data.books); 
+        setBooks(sortedBooks); 
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -45,7 +46,6 @@ export default function Home() {
   const displayedBooks = books.slice(startIndex, endIndex);
 
   return (
-    <>
       <div className="w-full flex flex-col z-0">
         <Hero/>
         <div className="flex flex-wrap gap-4 m-4 justify-between">
@@ -72,8 +72,6 @@ export default function Home() {
           onPageChange={(page: number) => setCurrentPage(page)}
         />
       </div>
-      <ToastContainer/>
-      </>
       
   );
 }
