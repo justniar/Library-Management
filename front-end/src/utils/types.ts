@@ -12,7 +12,7 @@ export interface BookProps {
     description?: string;
     isbn?: string;
     imageFile?: File | null;
-    image: null;
+    image: "";
 }
 
 export interface BorrowedBook {

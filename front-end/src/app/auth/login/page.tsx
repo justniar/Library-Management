@@ -67,7 +67,7 @@ const LoginPage = () => {
             router.push("/dashboard/user");
           }
         }, 2000);
-        
+
         if (role.toLowerCase() === "admin") {
           router.push("/dashboard/admin");
         } else {
@@ -132,6 +132,7 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

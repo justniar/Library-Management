@@ -39,3 +39,6 @@ Demo dapat dilihat di:
 ---
 **Catatan:** Pastikan Anda memiliki `Go`, `Node.js`, dan `npm` yang sudah terinstal di sistem Anda sebelum menjalankan proyek ini.
 
+## Changes: 
+### 1. db schema
+### 2. protected feature
