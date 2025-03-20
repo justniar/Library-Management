@@ -1,5 +1,6 @@
 "use client";
 
+import DeleteModal from "@/components/atom/DeleteModal";
 import Pagination from "@/components/atom/pagination";
 import BookModal from "@/components/organism/book/BookModal";
 import { BookProps } from "@/utils/types";
@@ -29,6 +30,8 @@ const AdminDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 8
   const [isEdit, setIsEdit] = useState(false); 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<BookProps | null>(null);
 
   useEffect(() => {
     fetchBooks();
@@ -131,13 +134,21 @@ const AdminDashboard = () => {
     setIsModalOpen(true);
   };
   
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("Yakin ingin menghapus buku ini?")) return;
+  const handleDelete = (book: BookProps) => {
+    console.log("Delete button clicked for:", book);
+    setBookToDelete(book);
+    setIsDeleteModalOpen(true);
+  };
+  
+  const confirmDelete = async () => {
+    if (!bookToDelete) return;
+  
     try {
-      const response = await fetch(`http://localhost:8080/books/${id}`, { method: "DELETE" });
+      const response = await fetch(`http://localhost:8080/books/${bookToDelete.id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete book");
-      fetchBooks();
+      alert("Buku berhasil dihapus!");
+      setIsDeleteModalOpen(false);
+      fetchBooks(); 
     } catch (error: any) {
       setError(error.message);
     }
@@ -170,13 +181,16 @@ const AdminDashboard = () => {
       {error && <p className="text-center text-red-900">{error}</p>}
       <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4">Tambah Buku</button>
       <BookModal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        onSubmit={handleSubmit}
-        formData={formData}
-        setFormData={setFormData}
-        isEdit={isEdit}
-      />
+          isOpen={isModalOpen}
+          onClose={handleClose}
+          onSubmit={handleSubmit}
+          formData={formData}
+          setFormData={setFormData}
+          isEdit={isEdit}
+        />
+      <div className="w-full bg-gray-400">
+        
+      </div>
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl p-6">
         <table className="w-full border-collapse">
           <thead>
@@ -205,7 +219,7 @@ const AdminDashboard = () => {
                     <button onClick={() => handleEdit(book)}>
                       <MdEdit />
                     </button>
-                    <button onClick={() => handleDelete(book.id)}>
+                    <button onClick={()=>handleDelete(book)}>
                       <MdOutlineDeleteOutline />
                     </button>
                   </td>
@@ -218,6 +232,12 @@ const AdminDashboard = () => {
             currentPage={currentPage}
             totalPages={Math.ceil(books.length / booksPerPage)}
             onPageChange={(page: number) => setCurrentPage(page)}
+        />
+        <DeleteModal
+          isOpen={isDeleteModalOpen} 
+          onClose={() => setIsDeleteModalOpen(false)} 
+          onConfirm={confirmDelete} 
+          bookTitle={bookToDelete?.title || ""} 
         />
       </div>
     </div>
