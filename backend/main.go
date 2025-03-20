@@ -36,6 +36,7 @@ func main() {
 
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)
+	r.POST("/logout", authHandler.Logout)
 
 	r.GET("/books", bookHandler.GetAllBooks)
 	r.POST("/books", bookHandler.AddBook)

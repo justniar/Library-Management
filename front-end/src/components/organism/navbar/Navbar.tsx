@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       router.push("/auth/login");
     }
   };
-
+  
   return (
     <nav className="w-full h-15 bg-amber-50 p-4 shadow-md">
       <div className="container mx-auto flex justify-end items-center">
