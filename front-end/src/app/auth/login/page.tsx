@@ -5,6 +5,8 @@ import pics from "@/assets/pic.jpg"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -46,6 +48,7 @@ const LoginPage = () => {
     
         const decodedToken: any = jwtDecode(token);
         const role = decodedToken.role;
+        const username = decodedToken.username;
     
         if (!role) {
           throw new Error("Role not found in token.");
@@ -53,14 +56,26 @@ const LoginPage = () => {
     
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
+        localStorage.setItem("username", username);
     
+        toast.success("Login berhasil!", { autoClose: 2000 });
+
+        setTimeout(() => {
+          if (role.toLowerCase() === "admin") {
+            router.push("/dashboard/admin");
+          } else {
+            router.push("/dashboard/user");
+          }
+        }, 2000);
+        
         if (role.toLowerCase() === "admin") {
           router.push("/dashboard/admin");
         } else {
           router.push("/dashboard/user");
         }
+
       } catch (error: any) {
-        setError(error.message);
+         toast.error(error.message, { autoClose: 3000 });
       } finally {
         setLoading(false);
       }

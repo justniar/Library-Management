@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         <div className="flex items-center text-red-900 cursor-pointer space-x-3">
           <span className="font-semibold">{username || "Guest"} </span>
           <FaRegCircleUser className="w-6 h-6" />
-          <button onClick={handleLogout} className="hover:text-red-950">
+          <button onClick={handleLogout} className="hover:text-red-950 cursor-pointer">
             <IoMdLogOut className="w-6 h-6" />
           </button>
         </div>

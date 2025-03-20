@@ -47,7 +47,7 @@ func (s *AuthService) Login(email, password string) (string, error) {
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := jwt.GenerateToken(user.Email, user.Role)
+	token, err := jwt.GenerateToken(user.Email, user.Role, user.Username)
 	if err != nil {
 		return "", err
 	}
