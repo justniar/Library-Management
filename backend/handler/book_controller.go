@@ -3,12 +3,14 @@ package handler
 import (
 	"backend/models"
 	service "backend/services"
+	"backend/utils/jwt"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -55,6 +57,30 @@ func (h *BookHandler) GetBookDetails(c *gin.Context) {
 }
 
 func (h *BookHandler) AddBook(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+		return
+	}
+
+	tokenParts := strings.Split(authHeader, " ")
+	if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
+	tokenString := tokenParts[1]
+
+	claims, err := jwt.ValidateToken(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	role, ok := claims["role"].(string)
+	if !ok || role != "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
 	var book models.Book
 
 	file, err := c.FormFile("image")
@@ -188,6 +214,31 @@ func (h *BookHandler) AddBook(c *gin.Context) {
 // }
 
 func (h *BookHandler) UpdateBook(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+		return
+	}
+
+	tokenParts := strings.Split(authHeader, " ")
+	if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
+	tokenString := tokenParts[1]
+
+	claims, err := jwt.ValidateToken(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	role, ok := claims["role"].(string)
+	if !ok || role != "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
+
 	bookID := c.Param("id")
 	id, err := strconv.Atoi(bookID)
 	if err != nil {
@@ -271,6 +322,31 @@ func (h *BookHandler) UpdateBook(c *gin.Context) {
 }
 
 func (h *BookHandler) DeleteBook(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+		return
+	}
+
+	tokenParts := strings.Split(authHeader, " ")
+	if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
+	tokenString := tokenParts[1]
+
+	claims, err := jwt.ValidateToken(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	role, ok := claims["role"].(string)
+	if !ok || role != "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
+
 	bookID := c.Param("id")
 	id, err := strconv.Atoi(bookID)
 	if err != nil {
