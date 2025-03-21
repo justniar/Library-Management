@@ -3,12 +3,23 @@
 import DeleteModal from "@/components/atom/DeleteModal";
 import Pagination from "@/components/atom/pagination";
 import BookModal from "@/components/organism/book/BookModal";
+import { AuthContext } from "@/context/AuthContext";
 import { BookProps } from "@/utils/types";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 
 const AdminDashboard = () => {
+  const router = useRouter()
+  const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    authContext?.isUserAuthenticated()
+    ? router.push("/dashboard/admin")
+    : router.push("/");
+  }, []);
+
   const [books, setBooks] = useState<BookProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +44,8 @@ const AdminDashboard = () => {
   const [isEdit, setIsEdit] = useState(false); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<BookProps | null>(null);
+
+  
 
   useEffect(() => {
     fetchBooks();
@@ -214,7 +227,7 @@ const AdminDashboard = () => {
                   <td className="p-3">{book.category}</td>
                   <td className="p-3 text-center">{book.stock}</td>
                   <td className="p-3 text-center">
-                    <img src={book.image.startsWith("http") ? book.image : `http://localhost:8080/${book.image.replace(/\\/g, "/")}`} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
+                    <img src={book.image?.startsWith("http") ? book.image : `http://localhost:8080/${book.image?.replace(/\\/g, "/")}`} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
                   </td>
                   <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
                     <button onClick={() => handleEdit(book)}>
