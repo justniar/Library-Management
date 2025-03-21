@@ -11,6 +11,7 @@ type BorrowingRepository interface {
 	BorrowBook(userID, bookID int) error
 	ReturnBook(userID, bookID int) error
 	GetBorrowingHistory(userID int) ([]models.BorrowHistory, error)
+	GetAllBorrowingHistory() ([]models.BorrowHistory, error)
 }
 
 type borrowingRepository struct {
@@ -59,6 +60,37 @@ func (r *borrowingRepository) ReturnBook(userID, bookID int) error {
 		return errors.New("no active borrowing record found")
 	}
 	return nil
+}
+
+func (r *borrowingRepository) GetAllBorrowingHistory() ([]models.BorrowHistory, error) {
+	query := `
+	SELECT bh.id, bh.user_id, bh.book_id, b.title, b.image, b.author, b.category, 
+	       bh.borrow_date, bh.return_date, bh.status, bh.created_at, bh.updated_at
+	FROM borrowing_history bh
+	JOIN books b ON bh.book_id = b.id
+	ORDER BY bh.borrow_date DESC`
+
+	rows, err := r.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var history []models.BorrowHistory
+	for rows.Next() {
+		var record models.BorrowHistory
+		err := rows.Scan(
+			&record.ID, &record.UserID, &record.BookID,
+			&record.Title, &record.Image, &record.Author, &record.Category,
+			&record.BorrowDate, &record.ReturnDate, &record.Status,
+			&record.CreatedAt, &record.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		history = append(history, record)
+	}
+	return history, nil
 }
 
 func (r *borrowingRepository) GetBorrowingHistory(userID int) ([]models.BorrowHistory, error) {

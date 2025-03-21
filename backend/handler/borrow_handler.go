@@ -3,8 +3,10 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	service "backend/services"
+	"backend/utils/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,6 +50,41 @@ func (h *BorrowingHandler) ReturnBook(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Book returned successfully"})
+}
+
+func (h *BorrowingHandler) GetAllBorrowingHistory(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
+		return
+	}
+
+	tokenParts := strings.Split(authHeader, " ")
+	if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
+	tokenString := tokenParts[1]
+
+	claims, err := jwt.ValidateToken(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	role, ok := claims["role"].(string)
+	if !ok || role != "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
+
+	history, err := h.BorrowingService.GetAllBorrowingHistory()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch borrowing history"})
+		return
+	}
+
+	c.JSON(http.StatusOK, history)
 }
 
 func (h *BorrowingHandler) GetBorrowingHistory(c *gin.Context) {

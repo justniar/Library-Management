@@ -53,6 +53,7 @@ func main() {
 		api.POST("/borrow/:user_id/:book_id", borrowingHandler.BorrowBook)
 		api.PUT("/return/:user_id/:book_id", borrowingHandler.ReturnBook)
 		api.GET("/history/:user_id", borrowingHandler.GetBorrowingHistory)
+		api.GET("/history", borrowingHandler.GetAllBorrowingHistory)
 	}
 
 	r.Run(":8080")
