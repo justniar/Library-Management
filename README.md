@@ -39,3 +39,7 @@ Demo dapat dilihat di:
 ---
 **Catatan:** Pastikan Anda memiliki `Go`, `Node.js`, dan `npm` yang sudah terinstal di sistem Anda sebelum menjalankan proyek ini.
 
+
+## Postman Collection Documentation
+
+[Postman Documentation](https://documenter.getpostman.com/view/33048335/2sAYkGLzhP)
