@@ -1,52 +1,58 @@
 "use client";
 import Pagination from '@/components/atom/pagination';
-// import { AuthContext } from '@/context/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 import { UserProps } from '@/utils/types';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 
 const Page = () => {
-  // const router = useRouter()
-  // const authContext = useContext(AuthContext);
   const [users, setUsers] = useState<UserProps[]>([]);
   const userPerPage = 8
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * userPerPage;
   const endIndex = startIndex + userPerPage;
-  // useEffect(() => {
-  //   authContext?.isUserAuthenticated()
-  //   ? router.push("/user-list")
-  //   : router.push("/");
-  // }, []);
+  const router = useRouter()
+  const authContext = useContext(AuthContext);
+    
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuthenticated = await authContext?.isUserAuthenticated();
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    };
   
+    checkAuth();
+  }, [authContext]);
+    
   
-    useEffect(() => {
-      const fetchAllUsers = async () => {
-        try {
-          const token = localStorage.getItem("token"); 
-          if (!token) {
-            throw new Error("Token tidak tersedia");
-          }
-          const response = await fetch(`http://localhost:8080/users`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (!response.ok) {
-            throw new Error("Failed to fetch All users");
-          }
-          const data = await response.json();
-          console.log(data);
-          setUsers(data.users);
-        } catch (error) {
-          console.error(error);
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      try {
+        const token = localStorage.getItem("token"); 
+        if (!token) {
+          throw new Error("Token tidak tersedia");
         }
-      };
-  
-      fetchAllUsers();
-    }, []);
+        const response = await fetch(`http://localhost:8080/users`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch All users");
+        }
+        const data = await response.json();
+        console.log(data);
+        setUsers(data.users);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchAllUsers();
+  }, []);
   
 
   return (

@@ -2,33 +2,41 @@ import React, { createContext, useState, ReactNode, useEffect } from "react";
 
 interface AuthState {
   token: string;
+  role: string;
 }
 
 interface AuthContextType {
   authState: AuthState;
-  setAuthState: (userAuthInfo: { data: { data: string } }) => void;
+  setAuthState: (userAuthInfo: { data: { token: string; role: string } }) => void;
+  isUserAuthenticated: () => boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({
-    token: localStorage.getItem("token") || "",
+    token: "",
+    role: "",
   });
-  
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setAuthState({ token: storedToken });
-      console.log("Token di Protected Route:", storedToken);
+    if (typeof window !== "undefined") {
+      try {
+        const storedToken = localStorage.getItem("token") || "";
+        const storedRole = localStorage.getItem("role") || "";
+        setAuthState({ token: storedToken, role: storedRole });
+      } catch (error) {
+        console.error("LocalStorage is not available", error);
+      }
     }
   }, []);
 
-  const setUserAuthInfo = ({ data }: { data: { data: string } }) => {
-    const token = data.data;
-    localStorage.setItem("token", token);
-    setAuthState({ token });
+  const setUserAuthInfo = ({ data }: { data: { token: string; role: string } }) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+    }
+    setAuthState({ token: data.token, role: data.role });
   };
 
   const isUserAuthenticated = () => {

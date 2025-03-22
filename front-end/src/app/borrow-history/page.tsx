@@ -1,29 +1,26 @@
 "use client";
 
 import Pagination from "@/components/atom/pagination";
-// import { AuthContext } from '@/context/AuthContext';
+import { AuthContext } from "@/context/AuthContext";
 import { BorrowedBook } from "@/utils/types";
-// import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 
 export default function BorrowHistory() {
-  // const router = useRouter()
-  // const authContext = useContext(AuthContext);
-  // const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-
-  // useEffect(() => {
-  //   if (authContext) {
-  //     const authStatus = authContext.isUserAuthenticated();
-  //     setIsAuthenticated(authStatus);
-  //     if (!authStatus) {
-  //       router.push("/");
-  //     }
-  //   }
-  // }, [authContext]);
-
-  // if (isAuthenticated === null) {
-  //   return <p>Loading...</p>; 
-  // }
+  const router = useRouter()
+  const authContext = useContext(AuthContext);
+  
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuthenticated = await authContext?.isUserAuthenticated();
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    };
+  
+    checkAuth();
+  }, [authContext]);
+    
 
   const [history, setHistory] = useState<BorrowedBook[]>([]);
   const [currentPage, setCurrentPage] = useState(1);

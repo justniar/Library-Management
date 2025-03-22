@@ -10,15 +10,22 @@ import { useContext, useEffect, useState } from "react";
 import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 
+
 const AdminDashboard = () => {
   const router = useRouter()
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    authContext?.isUserAuthenticated()
-    ? router.push("/dashboard/admin")
-    : router.push("/");
-  }, []);
+    const checkAuth = async () => {
+      const isAuthenticated = await authContext?.isUserAuthenticated();
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    };
+  
+    checkAuth();
+  }, [authContext]);
+  
 
   const [books, setBooks] = useState<BookProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +52,6 @@ const AdminDashboard = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<BookProps | null>(null);
 
-  
 
   useEffect(() => {
     fetchBooks();
