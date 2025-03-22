@@ -8,6 +8,7 @@ import { BookProps } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
+import { RingLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 
 
@@ -78,7 +79,11 @@ const AdminDashboard = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token tidak ditemukan!");
+      return;
+    }
     try {
       const formDataToSend : any = new FormData();
       formDataToSend.append("title", formData.title);
@@ -94,7 +99,6 @@ const AdminDashboard = () => {
       if (formData.imageFile) {
         formDataToSend.append("image", formData.imageFile);
       }
-      // formDataToSend.append("image", formData.imageFile, formData.imageFile.name);
   
       const url = isEdit
         ? `http://localhost:8080/books/${formData.id}`
@@ -107,6 +111,9 @@ const AdminDashboard = () => {
       
       const response = await fetch(url, {
         method,
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
         body: formDataToSend,
       });
 
@@ -197,7 +204,11 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen p-6">
       <h1 className="text-4xl font-bold text-red-900 text-center mb-8">Admin Dashboard - Buku</h1>
-      {loading && <p className="text-center text-red-900">Loading...</p>}
+      {loading && (
+          <div className="flex justify-center mt-4">
+          <RingLoader color="#9f0707" />
+        </div>
+      )}
       {error && <p className="text-center text-red-900">{error}</p>}
       <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4">Tambah Buku</button>
       <BookModal
