@@ -1,12 +1,30 @@
 "use client";
 
 import Pagination from "@/components/atom/pagination";
-import { AuthContext } from "@/context/AuthContext";
-import { BookProps, BorrowedBook } from "@/utils/types";
-import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+// import { AuthContext } from '@/context/AuthContext';
+import { BorrowedBook } from "@/utils/types";
+// import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function BorrowHistory() {
+  // const router = useRouter()
+  // const authContext = useContext(AuthContext);
+  // const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // useEffect(() => {
+  //   if (authContext) {
+  //     const authStatus = authContext.isUserAuthenticated();
+  //     setIsAuthenticated(authStatus);
+  //     if (!authStatus) {
+  //       router.push("/");
+  //     }
+  //   }
+  // }, [authContext]);
+
+  // if (isAuthenticated === null) {
+  //   return <p>Loading...</p>; 
+  // }
+
   const [history, setHistory] = useState<BorrowedBook[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 8
@@ -59,7 +77,7 @@ export default function BorrowHistory() {
             </tr>
           </thead>
           <tbody>
-            {history.map((book) => (
+            {displayedBooks.map((book) => (
               <tr key={book.id} className="border-b">
                 <td className="p-3">{book.user_id}</td>
                 <td className="p-3 flex items-center">

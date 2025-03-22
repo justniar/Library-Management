@@ -7,7 +7,6 @@ interface AuthState {
 interface AuthContextType {
   authState: AuthState;
   setAuthState: (userAuthInfo: { data: { data: string } }) => void;
-  isUserAuthenticated: () => boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

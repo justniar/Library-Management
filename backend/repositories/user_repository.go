@@ -40,7 +40,7 @@ func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 func (r *UserRepository) GetAllUserss() ([]models.User, error) {
 	query := `
 		SELECT 
-		u.id, u.username, u.email, u.role, 
+		u.id, ud.user_id, u.username, u.email, u.role, 
 		ud.full_name, ud.about_me, ud.genre, 
 		ud.phone, ud.address, u.created_at, u.updated_at
 		FROM users u
@@ -55,7 +55,7 @@ func (r *UserRepository) GetAllUserss() ([]models.User, error) {
 	var users []models.User
 	for rows.Next() {
 		var user models.User
-		err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Role, &user.FullName, &user.Aboutme, &user.Genre, &user.Phone, &user.Address, &user.CreatedAt, &user.UpdatedAt)
+		err := rows.Scan(&user.ID, &user.UserID, &user.Username, &user.Email, &user.Role, &user.FullName, &user.Aboutme, &user.Genre, &user.Phone, &user.Address, &user.CreatedAt, &user.UpdatedAt)
 		if err != nil {
 			log.Println("Error scanning user:", err)
 			return nil, err

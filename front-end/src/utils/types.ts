@@ -41,4 +41,5 @@ export interface UserProps {
     genre: string;
     phone: string;
     address: string;
+    created_at: string;
 }
