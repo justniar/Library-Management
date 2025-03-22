@@ -23,6 +23,7 @@ export interface BorrowedBook {
     author: string;
     category: string;
     image: string;
+    stock: number;
     description: string;
     synopsis: string;
     borrow_date: string;

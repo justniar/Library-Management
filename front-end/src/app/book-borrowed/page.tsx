@@ -2,7 +2,6 @@
 import BookDetails from "@/components/organism/book/BookDetails";
 import { BorrowedBook } from "@/utils/types";
 import { jwtDecode } from "jwt-decode";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface DecodedToken {
@@ -28,6 +27,7 @@ export default function BorrowedBooks() {
   }, []);
 
   useEffect(() => {
+    if (!userID) return; 
     const fetchBorrowedBooks = async () => {
       try {
         const response = await fetch(`http://localhost:8080/book/history/${userID}`);
