@@ -4,6 +4,7 @@ import CardBook from "@/components/organism/book/CardBook";
 import Hero from "@/components/organism/carrousel/Hero";
 import { BookProps } from "@/utils/types";
 import { useEffect, useState } from "react";
+import { RingLoader } from "react-spinners";
 
 export default function Home() {
   const [books, setBooks] = useState<BookProps[]>([]);
@@ -50,7 +51,7 @@ export default function Home() {
         <Hero/>
         <div className="flex flex-wrap gap-4 m-4 justify-between">
           {loading ? (
-            <p>Loading books</p>
+            <RingLoader/>
           ) : error ? (
             <p>{error}</p>
           ): (
