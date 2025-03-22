@@ -50,8 +50,8 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="w-full grid grid-cols-2 h-screen">
-      <div className="relative">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 h-screen">
+      <div className="relative hidden md:block">
         <Image src={pics} alt="Register Illustration" fill className="object-cover" />
       </div>
 
