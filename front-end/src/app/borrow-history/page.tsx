@@ -1,12 +1,18 @@
 "use client";
 
+import Pagination from "@/components/atom/pagination";
 import { AuthContext } from "@/context/AuthContext";
-import { BorrowedBook } from "@/utils/types";
+import { BookProps, BorrowedBook } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
 export default function BorrowHistory() {
   const [history, setHistory] = useState<BorrowedBook[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 8
+  const startIndex = (currentPage - 1) * booksPerPage;
+  const endIndex = startIndex + booksPerPage;
+  const displayedBooks = history.slice(startIndex, endIndex);
 
   useEffect(() => {
     const fetchBorrowedBooks = async () => {
@@ -80,9 +86,12 @@ export default function BorrowHistory() {
             ))}
           </tbody>
         </table>
+        <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(history.length / booksPerPage)}
+            onPageChange={(page: number) => setCurrentPage(page)}
+          />
       </div>
     </div>
   );
 };
-
-// export default BorrowHistory;
