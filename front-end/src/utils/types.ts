@@ -30,3 +30,15 @@ export interface BorrowedBook {
     status: string;
   }
   
+export interface UserProps {
+    id: number;
+    user_id: number;
+    username: string;
+    email: string;
+    role: string;
+    fullName: string;
+    about: string;
+    genre: string;
+    phone: string;
+    address: string;
+}

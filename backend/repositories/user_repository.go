@@ -66,24 +66,26 @@ func (r *UserRepository) GetAllUserss() ([]models.User, error) {
 	return users, nil
 }
 
-func (r *UserRepository) GetUserDetails(userID int) (*models.User, error) {
+func (r *UserRepository) GetUserDetails(username string) (*models.User, error) {
 	query := `
-		SELECT id, user_id, full_name, about_me, genre, phone, address, created_at, updated_at
-		FROM user_details WHERE user_id = $1 AND deleted_at IS NULL
+		SELECT u.id, u.username, u.email, u.role, 
+		ud.full_name, ud.about_me, ud.genre, 
+		ud.phone, ud.address
+		FROM users u
+		LEFT JOIN user_details ud ON u.id = ud.user_id
+		WHERE u.username = $1;
 	`
 
-	log.Println("Executing query:", query, "with userID:", userID)
 	var user models.User
-	err := r.DB.QueryRow(query, userID).Scan(
-		&user.ID, &user.UserID, &user.FullName, &user.Aboutme, &user.Genre, &user.Phone, &user.Address, &user.CreatedAt, &user.UpdatedAt,
+	err := r.DB.QueryRow(query, username).Scan(
+		&user.ID, &user.Username, &user.Email, &user.Role,
+		&user.FullName, &user.Aboutme, &user.Genre,
+		&user.Phone, &user.Address,
 	)
-
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Println("No user found with ID:", userID)
-			return nil, errors.New("user details not found")
+			return nil, errors.New("user not found")
 		}
-		log.Println("Database error:", err)
 		return nil, err
 	}
 

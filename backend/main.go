@@ -59,7 +59,7 @@ func main() {
 	}
 
 	r.GET("/users", userHandler.GetAllUser)
-	r.GET("/users/:id", userHandler.GetUserDetails)
+	r.GET("/users/:username", userHandler.GetUserDetails)
 
 	r.Run(":8080")
 }

@@ -17,6 +17,6 @@ func (s *UserService) GetAllUsers() ([]models.User, error) {
 	return s.UserRepo.GetAllUserss()
 }
 
-func (s *UserService) GetUserDetails(userID int) (*models.User, error) {
-	return s.UserRepo.GetUserDetails(userID)
+func (s *UserService) GetUserDetails(username string) (*models.User, error) {
+	return s.UserRepo.GetUserDetails(username)
 }

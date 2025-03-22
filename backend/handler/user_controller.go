@@ -5,7 +5,6 @@ import (
 	"backend/utils/jwt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -56,22 +55,14 @@ func (h *UserHandler) GetAllUser(c *gin.Context) {
 }
 
 func (h *UserHandler) GetUserDetails(c *gin.Context) {
-	userID := c.Param("id")
-	log.Println("Received user ID:", userID)
+	username := c.Param("username")
+	log.Println("Fetching profile for username:", username)
 
-	id, err := strconv.Atoi(userID)
+	user, err := h.UserService.GetUserDetails(username)
 	if err != nil {
-		log.Println("Invalid user ID:", userID)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	user, err := h.UserService.GetUserDetails(id)
-	log.Println("user not found with ID:", id)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user details not found"})
-		return
-	}
-	log.Println("Returning user details:", user)
 	c.JSON(http.StatusOK, user)
 }
