@@ -66,27 +66,26 @@ func (r *UserRepository) GetAllUserss() ([]models.User, error) {
 	return users, nil
 }
 
-// func (r *UserRepository) GetUserDetails(userID int) (*models.Book, error) {
-// 	query := `
-// 		SELECT id, user_id, full_name, about_me, genre, phone, address, created_at, updated_at
-// 		FROM user_details WHERE deleted_at IS NULL`
+func (r *UserRepository) GetUserDetails(userID int) (*models.User, error) {
+	query := `
+		SELECT id, user_id, full_name, about_me, genre, phone, address, created_at, updated_at
+		FROM user_details WHERE user_id = $1 AND deleted_at IS NULL
+	`
 
-// 	log.Println("Executing query:", query, "with bookID:", userID)
-// 	var user models.User
-// 	err := r.DB.QueryRow(query, userID).Scan(
-// 		&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.Image,
-// 		&book.Publisher, &book.PublicationYear, &book.Pages, &book.Language,
-// 		&book.Description, &book.ISBN, &book.CreatedAt, &book.UpdatedAt, &book.DeletedAt,
-// 	)
+	log.Println("Executing query:", query, "with userID:", userID)
+	var user models.User
+	err := r.DB.QueryRow(query, userID).Scan(
+		&user.ID, &user.UserID, &user.FullName, &user.Aboutme, &user.Genre, &user.Phone, &user.Address, &user.CreatedAt, &user.UpdatedAt,
+	)
 
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			log.Println("No book found with ID:", userID)
-// 			return nil, errors.New("book details not found")
-// 		}
-// 		log.Println("Database error:", err)
-// 		return nil, err
-// 	}
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("No user found with ID:", userID)
+			return nil, errors.New("user details not found")
+		}
+		log.Println("Database error:", err)
+		return nil, err
+	}
 
-// 	return &user, nil
-// }
+	return &user, nil
+}
