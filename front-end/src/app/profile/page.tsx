@@ -39,7 +39,7 @@ const Profile: React.FC = () => {
               className="rounded-full w-48 h-48 mx-auto mb-4 border-4 border-red-900 dark:border-red-bg-red-950 transition-transform duration-300 hover:scale-105"
             />
             <h1 className="text-2xl font-bold text-red-900 dark:text-white mb-2">
-              {profile?.fullName} 
+              {profile?.full_name} 
             </h1>
             <p className="text-gray-600 dark:text-gray-300">{profile?.username}</p>
             <button className="mt-4 bg-red-900 text-white px-4 py-2 rounded-lg hover:bg-red-950 transition-colors duration-300">
@@ -49,27 +49,20 @@ const Profile: React.FC = () => {
 
           <div className="md:w-2/3 md:pl-8">
             <h2 className="text-xl font-semibold text-red-900 dark:text-white mb-4">
-              {}
+              About
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              {profile?.about}
+              {profile?.about_me}
             </p>
 
-            <h2 className="text-xl font-semibold text-red-900 dark:text-white mb-4">
-              {profile?.genre}
+            <h2 className="text-xl font-semibold text-red-900 dark:text-white">
+              Genre
             </h2>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {['Romance', 'Ficion', 'Young Adult'].map((skill) => (
-                <span
-                  key={skill}
-                  className="bg-indigo-100 text-red-900 px-3 py-1 rounded-full text-sm"
-                >
-                  {skill}
-                </span>
-              ))}
+            <div className="max-w-max p-2 bg-red-900 rounded-2xl text-amber-50 text-center">
+              {profile?.genre}
             </div>
 
-            <h2 className="text-xl font-semibold text-red-900 dark:text-white mb-4">
+            <h2 className="text-xl font-semibold text-red-900 dark:text-white mt-1.5 mb-4">
               Contact Information
             </h2>
             <ul className="space-y-2 text-gray-700 dark:text-gray-300">

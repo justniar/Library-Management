@@ -36,8 +36,8 @@ export interface UserProps {
     username: string;
     email: string;
     role: string;
-    fullName: string;
-    about: string;
+    full_name: string;
+    about_me: string;
     genre: string;
     phone: string;
     address: string;
