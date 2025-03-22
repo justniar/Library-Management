@@ -17,6 +17,8 @@ func main() {
 	userRepo := repositories.NewUserRepository(config.DB)
 	authService := service.NewAuthService(userRepo)
 	authHandler := handler.NewAuthHandler(authService)
+	userService := service.NewUserService(userRepo)
+	userHandler := handler.NewUserHandler(userService)
 
 	bookRepo := repositories.NewBookRepository(config.DB)
 	bookService := service.NewBookService(bookRepo)
@@ -55,6 +57,8 @@ func main() {
 		api.GET("/history/:user_id", borrowingHandler.GetBorrowingHistory)
 		api.GET("/history", borrowingHandler.GetAllBorrowingHistory)
 	}
+
+	r.GET("/users", userHandler.GetAllUser)
 
 	r.Run(":8080")
 }
