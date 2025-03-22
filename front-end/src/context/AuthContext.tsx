@@ -16,11 +16,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [authState, setAuthState] = useState<AuthState>({
     token: localStorage.getItem("token") || "",
   });
+  
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setAuthState({ token: storedToken });
+      console.log("Token di Protected Route:", storedToken);
     }
   }, []);
 
