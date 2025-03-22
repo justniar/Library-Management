@@ -50,6 +50,7 @@ const LoginPage = () => {
       const decodedToken: any = jwtDecode(token);
       const role = decodedToken.role;
       const username = decodedToken.username;
+      const id = decodedToken.id;
 
       if (!role) {
         throw new Error("Role not found in token.");
@@ -58,6 +59,8 @@ const LoginPage = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       localStorage.setItem("username", username);
+      localStorage.setItem("id", id);
+
       console.log(localStorage.getItem("token"))
       toast.success("Login success! Go to dashboard...", { autoClose: 1000 });
 

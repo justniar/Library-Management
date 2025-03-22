@@ -51,7 +51,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     }
   }, [authContext?.authState?.token]);
 
-  if (!isClient) return null; // Hindari SSR sebelum komponen di-mount
+  if (!isClient) return null; 
 
   return (
     <div className="flex w-full h-screen">
