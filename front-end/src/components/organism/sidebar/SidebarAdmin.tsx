@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Link from "next/link";
 import { JSX, useState } from "react";
 import { FaBars, FaHistory, FaHome, FaRegUserCircle } from "react-icons/fa";
@@ -18,7 +18,7 @@ const SidebarAdmin= () => {
             <SidebarItem to="/dashboard/admin" icon={<FaHome className="w-6 h-6" />} text="Dashboard" isOpen={isOpen} />
             {/* <SidebarItem to="/book-borrowed" icon={<FaBook className="w-6 h-6" />} text="Book Borrowed" isOpen={isOpen} /> */}
             <SidebarItem to="/borrow-history" icon={<FaHistory className="w-6 h-6" />} text="Borrow History" isOpen={isOpen} />
-            <SidebarItem to="/user-list" icon={<FaRegUserCircle className="w-6 h-6" />} text="User List" isOpen={isOpen} />
+            <SidebarItem to="/userlist" icon={<FaRegUserCircle className="w-6 h-6" />} text="User List" isOpen={isOpen} />
 
             <SidebarItem to="/profile" icon={<FaRegUserCircle className="w-6 h-6" />} text="Profile" isOpen={isOpen} />
             {/* <SidebarItem to="/settings" icon={<IoMdSettings className="w-6 h-6" />} text="Settings" isOpen={isOpen} /> */}

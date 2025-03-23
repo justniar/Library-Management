@@ -49,6 +49,7 @@ func (h *UserHandler) GetAllUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get users"})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"users": users,
 	})

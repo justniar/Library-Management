@@ -40,9 +40,10 @@ func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 func (r *UserRepository) GetAllUserss() ([]models.User, error) {
 	query := `
 		SELECT 
-		u.id, ud.user_id, u.username, u.email, u.role, 
-		ud.full_name, ud.about_me, ud.genre, 
-		ud.phone, ud.address, u.created_at, u.updated_at
+			u.id, COALESCE(ud.user_id, 0), u.username, u.email, u.role, 
+			COALESCE(ud.full_name, ''), COALESCE(ud.about_me, ''), 
+			COALESCE(ud.genre, ''), COALESCE(ud.phone, ''), 
+			COALESCE(ud.address, ''), u.created_at, u.updated_at
 		FROM users u
 		LEFT JOIN user_details ud ON u.id = ud.user_id;
 		`

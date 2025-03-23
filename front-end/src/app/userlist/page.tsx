@@ -43,6 +43,8 @@ const UserList = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch All users");
         }
+        console.log(Error)
+
         const data = await response.json();
         console.log(data);
         setUsers(data.users);
