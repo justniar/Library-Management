@@ -12,7 +12,7 @@ export interface BookProps {
     description?: string;
     isbn?: string;
     imageFile?: File | null;
-    image: "";
+    image: string | null;
 }
 
 export interface BorrowedBook {
@@ -23,6 +23,7 @@ export interface BorrowedBook {
     author: string;
     category: string;
     image: string;
+    stock: number;
     description: string;
     synopsis: string;
     borrow_date: string;
@@ -30,3 +31,16 @@ export interface BorrowedBook {
     status: string;
   }
   
+export interface UserProps {
+    id: number;
+    user_id: number;
+    username: string;
+    email: string;
+    role: string;
+    full_name: string;
+    about_me: string;
+    genre: string;
+    phone: string;
+    address: string;
+    created_at: string;
+}

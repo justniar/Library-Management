@@ -4,6 +4,7 @@ import Image from "next/image";
 import pics from "@/assets/pic.jpg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { RingLoader } from "react-spinners";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -50,8 +51,8 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="w-full grid grid-cols-2 h-screen">
-      <div className="relative">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 h-screen">
+      <div className="relative hidden md:block">
         <Image src={pics} alt="Register Illustration" fill className="object-cover" />
       </div>
 
@@ -117,12 +118,17 @@ const RegisterPage = () => {
               type="submit"
               className="w-full mt-6 bg-red-900 text-white py-2 rounded-md hover:bg-red-800"
             >
-              {loading ? "Registering..." : "Register"}
+              {/* {loading ? "Registering..." : "Register"} */}
+              {loading && (
+                <div className="flex justify-center mt-4">
+                  <RingLoader color="#9f0707" />
+                </div>
+              )}
             </button>
           </form>
           <p className="text-center mt-4">
             Already have an account?{" "}
-            <a href="/login" className="text-red-900 hover:underline">
+            <a href="/auth/login" className="text-red-900 hover:underline">
               Login
             </a>
           </p>

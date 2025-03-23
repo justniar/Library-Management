@@ -1,16 +1,33 @@
 "use client";
 import BookDetails from "@/components/organism/book/BookDetails";
 import { BorrowedBook } from "@/utils/types";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+
+interface DecodedToken {
+  id: string; 
+}
 
 export default function BorrowedBooks() {
   const [books, setBooks] = useState<BorrowedBook[]>([]);
   const [selectedBook, setSelectedBook] = useState<BorrowedBook | null>(null);
   const [isReturning, setIsReturning] = useState(false);
+  const [userID, setUserID] = useState<string | null>(null);
   
-  const userID = 1;
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded: DecodedToken = jwtDecode(token);
+        setUserID(decoded.id); 
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
+    if (!userID) return; 
     const fetchBorrowedBooks = async () => {
       try {
         const response = await fetch(`http://localhost:8080/book/history/${userID}`);

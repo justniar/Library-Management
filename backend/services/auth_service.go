@@ -6,6 +6,7 @@ import (
 	"backend/utils/hash"
 	"backend/utils/jwt"
 	"errors"
+	"strconv"
 )
 
 type AuthService struct {
@@ -47,7 +48,7 @@ func (s *AuthService) Login(email, password string) (string, error) {
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := jwt.GenerateToken(user.Email, user.Role, user.Username)
+	token, err := jwt.GenerateToken(strconv.Itoa(user.ID), user.Email, user.Role, user.Username)
 	if err != nil {
 		return "", err
 	}

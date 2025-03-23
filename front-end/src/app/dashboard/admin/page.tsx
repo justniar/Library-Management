@@ -3,12 +3,31 @@
 import DeleteModal from "@/components/atom/DeleteModal";
 import Pagination from "@/components/atom/pagination";
 import BookModal from "@/components/organism/book/BookModal";
+import { AuthContext } from "@/context/AuthContext";
 import { BookProps } from "@/utils/types";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
+import { RingLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 
+
 const AdminDashboard = () => {
+  const router = useRouter()
+  const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuthenticated = await authContext?.isUserAuthenticated();
+      if (!isAuthenticated) {
+        router.push("/");
+      }
+    };
+  
+    checkAuth();
+  }, [authContext]);
+  
+
   const [books, setBooks] = useState<BookProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +52,7 @@ const AdminDashboard = () => {
   const [isEdit, setIsEdit] = useState(false); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<BookProps | null>(null);
+
 
   useEffect(() => {
     fetchBooks();
@@ -59,7 +79,11 @@ const AdminDashboard = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token tidak ditemukan!");
+      return;
+    }
     try {
       const formDataToSend : any = new FormData();
       formDataToSend.append("title", formData.title);
@@ -75,7 +99,6 @@ const AdminDashboard = () => {
       if (formData.imageFile) {
         formDataToSend.append("image", formData.imageFile);
       }
-      // formDataToSend.append("image", formData.imageFile, formData.imageFile.name);
   
       const url = isEdit
         ? `http://localhost:8080/books/${formData.id}`
@@ -88,6 +111,9 @@ const AdminDashboard = () => {
       
       const response = await fetch(url, {
         method,
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
         body: formDataToSend,
       });
 
@@ -178,7 +204,11 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen p-6">
       <h1 className="text-4xl font-bold text-red-900 text-center mb-8">Admin Dashboard - Buku</h1>
-      {loading && <p className="text-center text-red-900">Loading...</p>}
+      {loading && (
+          <div className="flex justify-center mt-4">
+          <RingLoader color="#9f0707" />
+        </div>
+      )}
       {error && <p className="text-center text-red-900">{error}</p>}
       <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4">Tambah Buku</button>
       <BookModal
@@ -214,7 +244,7 @@ const AdminDashboard = () => {
                   <td className="p-3">{book.category}</td>
                   <td className="p-3 text-center">{book.stock}</td>
                   <td className="p-3 text-center">
-                    <img src={book.image.startsWith("http") ? book.image : `http://localhost:8080/${book.image.replace(/\\/g, "/")}`} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
+                    <img src={book.image?.startsWith("http") ? book.image : `http://localhost:8080/${book.image?.replace(/\\/g, "/")}`} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
                   </td>
                   <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
                     <button onClick={() => handleEdit(book)}>

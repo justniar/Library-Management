@@ -6,10 +6,16 @@ import (
 
 type User struct {
 	ID           int       `json:"id"`
+	UserID       int       `json:"user_id"`
 	Username     string    `json:"username"`
 	Email        string    `json:"email"`
 	PasswordHash string    `json:"-"`
 	Role         string    `json:"role"`
+	FullName     string    `json:"full_name"`
+	Aboutme      string    `json:"about_me"`
+	Genre        string    `json:"genre"`
+	Phone        string    `json:"phone"`
+	Address      string    `json:"address"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	DeletedAt    time.Time `json:"deleted_at,omitempty"`
