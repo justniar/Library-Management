@@ -1,7 +1,7 @@
 # Library Management
 
 ## Pendahuluan
-Proyek ini merupakan aplikasi manajemen perpustakaan yang dikembangkan menggunakan Next.js untuk frontend dan Golang (Gin) untuk backend.
+Proyek ini merupakan aplikasi manajemen perpustakaan yang dikembangkan menggunakan Next.js untuk frontend dan Golang (Gin) untuk backend. [Postman Documentation](https://documenter.getpostman.com/view/33048335/2sAYkGLzhP)
 
 ## Instalasi dan Menjalankan Proyek
 
@@ -38,8 +38,3 @@ Demo dapat dilihat di:
 
 ---
 **Catatan:** Pastikan Anda memiliki `Go`, `Node.js`, dan `npm` yang sudah terinstal di sistem Anda sebelum menjalankan proyek ini.
-
-
-## Postman Collection Documentation
-
-[Postman Documentation](https://documenter.getpostman.com/view/33048335/2sAYkGLzhP)
