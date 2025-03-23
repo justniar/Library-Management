@@ -5,14 +5,14 @@ Proyek ini merupakan aplikasi manajemen perpustakaan yang dikembangkan menggunak
 
 ## Instalasi dan Menjalankan Proyek
 
-### 1. Clone Repository
+### 1. Fork dan Clone Repository
 ```sh
 git clone https://github.com/justniar/Library-Management.git
 cd Library-Management
 ```
 
 ### 2. Buat Database
-Buat database di MySQL atau PostgreSQL sesuai dengan konfigurasi yang digunakan dalam proyek.
+Buat database di PostgreSQL sesuai dengan konfigurasi yang digunakan dalam proyek.
 
 ### 3. Jalankan Script SQL
 Import atau jalankan skrip SQL yang disediakan untuk menyiapkan tabel dan data awal.
