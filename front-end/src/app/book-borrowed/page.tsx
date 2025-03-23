@@ -35,7 +35,7 @@ export default function BorrowedBooks() {
         
         const data = await response.json();
         console.log("Fetched data:", data);
-        const filteredBooks = data
+        const filteredBooks = (Array.isArray(data.history) ? data.history : [])
           .filter((book: BorrowedBook) => book.status !== "returned")
           .map((book: BorrowedBook) => ({
             ...book,

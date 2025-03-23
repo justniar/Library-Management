@@ -46,7 +46,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        className="fixed z-20 inset-0 flex items-center justify-center backdrop-brightness-10"
+        className="w-full md:inset-0 max-h-full fixed z-20 flex items-center justify-center backdrop-brightness-10"
         ariaHideApp={false}
         >
         <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">

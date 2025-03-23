@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { JSX, useEffect, useState } from "react";
 import { FaBars, FaBook, FaHistory, FaHome, FaRegUserCircle } from "react-icons/fa";
-// import { IoMdSettings } from "react-icons/io";
 
 const SidebarUser = () => {
   const [isOpen, setIsOpen] = useState(true);
