@@ -4,6 +4,8 @@ import Image from "next/image";
 import pics from "@/assets/pic.jpg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -13,6 +15,7 @@ const RegisterPage = () => {
   const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +43,10 @@ const RegisterPage = () => {
         throw new Error(errorData.message || "Registration failed");
       }
 
-      alert("Registration successful!");
+      toast.success("Registration successful!", { autoClose: 2000 } );
       router.push("/auth/login");
     } catch (error: any) {
-      setError(error.message);
+      toast.error(error.message, { autoClose: 2000 });
     } finally {
       setLoading(false);
     }
@@ -82,13 +85,22 @@ const RegisterPage = () => {
             </div>
             <div className="mt-4">
               <label className="block font-medium">Password</label>
-              <input
-                type="password"
-                className="w-full mt-2 px-3 py-2 border rounded-md"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <input
+                    type={showPassword ? "text" : "password"}
+                    className="w-full mt-2 px-3 py-2 border rounded-md"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-5 text-gray-500"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
+                </button>
+              </div>
             </div>
             <div className="mt-4">
               <label className="block font-medium">Register as</label>

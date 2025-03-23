@@ -39,6 +39,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   const authContext = useContext(AuthContext);
   const userRole = authContext?.authState?.role || "";
+  // const { role } = useContext(AuthContext);
 
   useEffect(() => {
     setIsClient(true);
