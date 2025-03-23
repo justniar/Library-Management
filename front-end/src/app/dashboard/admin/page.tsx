@@ -29,6 +29,9 @@ const AdminDashboard = () => {
   
 
   const [books, setBooks] = useState<BookProps[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,8 +50,6 @@ const AdminDashboard = () => {
     image:"",
   });
   
-  const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 8
   const [isEdit, setIsEdit] = useState(false); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<BookProps | null>(null);
@@ -56,26 +57,21 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [currentPage]);
 
   const fetchBooks = async () => {
     try {
-      const response = await fetch("http://localhost:8080/books");
+      const response = await fetch(`http://localhost:8080/books?page=${currentPage}`);
       if (!response.ok) throw new Error("Failed to fetch books");
       const data = await response.json();
-      const sortedBooks = [...data.books].sort((a, b) => b.id - a.id);
-      setBooks(sortedBooks);
-      console.log(data);
+      setBooks(data.books);
+      setTotalPages(data.total_pages)
     } catch (error: any) {
       toast.error(error.message);
     } finally {
       setLoading(false);
     }
   };
-
-  const startIndex = (currentPage - 1) * booksPerPage;
-  const endIndex = startIndex + booksPerPage;
-  const displayedBooks = books.slice(startIndex, endIndex);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,7 +232,7 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {(displayedBooks.map((book, index) => (
+            {(books.map((book, index) => (
                 <tr key={book.id} className="hover:bg-amber-100">
                   <td className="p-3 text-center">{index + 1}</td>
                   <td className="p-3">{book.title}</td>
@@ -261,7 +257,7 @@ const AdminDashboard = () => {
         </table>
         <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(books.length / booksPerPage)}
+            totalPages={totalPages}
             onPageChange={(page: number) => setCurrentPage(page)}
         />
         <DeleteModal
