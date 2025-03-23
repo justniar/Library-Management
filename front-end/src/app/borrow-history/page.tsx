@@ -9,6 +9,9 @@ import { useContext, useEffect, useState } from "react";
 export default function BorrowHistory() {
   const router = useRouter()
   const authContext = useContext(AuthContext);
+  const [histories, setHistories] = useState<BorrowedBook[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   useEffect(() => {
     const checkAuth = async () => {
@@ -22,12 +25,6 @@ export default function BorrowHistory() {
   }, [authContext]);
     
 
-  const [history, setHistory] = useState<BorrowedBook[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 8
-  const startIndex = (currentPage - 1) * booksPerPage;
-  const endIndex = startIndex + booksPerPage;
-  const displayedBooks = history.slice(startIndex, endIndex);
 
   useEffect(() => {
     const fetchBorrowedBooks = async () => {
@@ -37,7 +34,7 @@ export default function BorrowHistory() {
           throw new Error("Token tidak tersedia");
         }
         
-        const response = await fetch(`http://localhost:8080/book/history`, {
+        const response = await fetch(`http://localhost:8080/book/history?page=${currentPage}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -48,15 +45,15 @@ export default function BorrowHistory() {
           throw new Error("Failed to fetch borrowed books");
         }
         const data = await response.json();
-        console.log(data);
-        setHistory(data);
+        setHistories(data.history);
+        setTotalPages(data.total_pages)
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchBorrowedBooks();
-  }, []);
+  }, [currentPage]);
 
   return (
     <div className="container mx-auto p-6">
@@ -74,28 +71,28 @@ export default function BorrowHistory() {
             </tr>
           </thead>
           <tbody>
-            {displayedBooks.map((book) => (
-              <tr key={book.id} className="border-b">
-                <td className="p-3">{book.user_id}</td>
+            {histories.map((history) => (
+              <tr key={history.id} className="border-b">
+                <td className="p-3">{history.user_id}</td>
                 <td className="p-3 flex items-center">
                   <img 
-                    src={book.image.startsWith("http") ? book.image : `http://localhost:8080/${book.image.replace(/\\/g, "/")}`}
-                    alt={book.title} 
+                    src={history.image.startsWith("http") ? history.image : `http://localhost:8080/${history.image.replace(/\\/g, "/")}`}
+                    alt={history.title} 
                     className="w-12 h-12 mr-3 rounded-md object-cover" />
                   <div>
-                    <p className="font-semibold">{book.title}</p>
-                    <p className="text-sm text-gray-500">{book.author}</p>
+                    <p className="font-semibold">{history.title}</p>
+                    <p className="text-sm text-gray-500">{history.author}</p>
                   </div>
                 </td>
-                <td className="p-3">{book.category}</td>
+                <td className="p-3">{history.category}</td>
                 <td className="p-3">
-                  {book.borrow_date ? new Date(book.borrow_date).toLocaleDateString() : "N/A"}
+                  {history.borrow_date ? new Date(history.borrow_date).toLocaleDateString() : "N/A"}
                 </td>
                 <td className="p-3">
-                  {book.return_date ? new Date(book.return_date).toLocaleDateString() : "-"}
+                  {history.return_date ? new Date(history.return_date).toLocaleDateString() : "-"}
                 </td>
-                <td className={`p-3 ${book.status === "Borrowed" ? "text-red-900" : "text-green-900"}`}>
-                  {book.status}
+                <td className={`p-3 ${history.status === "Borrowed" ? "text-red-900" : "text-green-900"}`}>
+                  {history.status}
                 </td>
               </tr>
             ))}
@@ -103,7 +100,7 @@ export default function BorrowHistory() {
         </table>
         <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(history.length / booksPerPage)}
+            totalPages={totalPages}
             onPageChange={(page: number) => setCurrentPage(page)}
           />
       </div>

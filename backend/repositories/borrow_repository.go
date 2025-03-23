@@ -106,8 +106,8 @@ func (r *borrowingRepository) GetAllBorrowingHistory(limit, offset int) ([]model
 func (r *borrowingRepository) GetBorrowingHistory(userID, limit, offset int) ([]models.BorrowHistory, int, error) {
 	var history []models.BorrowHistory
 	var totalCount int
-	countQuery := "SELECT COUNT(*) FROM borrowing_history WHERE deleted_at IS NULL"
-	err := r.DB.QueryRow(countQuery).Scan(&totalCount)
+	countQuery := "SELECT COUNT(*) FROM borrowing_history WHERE user_id = $1 AND deleted_at IS NULL"
+	err := r.DB.QueryRow(countQuery, userID).Scan(&totalCount)
 	if err != nil {
 		log.Println("Error fetching total history count:", err)
 		return nil, 0, err
@@ -139,6 +139,9 @@ func (r *borrowingRepository) GetBorrowingHistory(userID, limit, offset int) ([]
 			return nil, 0, err
 		}
 		history = append(history, record)
+	}
+	if len(history) == 0 {
+		return []models.BorrowHistory{}, totalCount, nil
 	}
 	return history, totalCount, nil
 }

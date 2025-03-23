@@ -120,7 +120,10 @@ func (h *BorrowingHandler) GetBorrowingHistory(c *gin.Context) {
 		return
 	}
 
-	totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
+	totalPages := 0
+	if totalCount > 0 {
+		totalPages = int(math.Ceil(float64(totalCount) / float64(limit)))
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"history":       history,
 		"total_history": totalCount,

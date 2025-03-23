@@ -1,45 +1,54 @@
 "use client";
 
+import Pagination from "@/components/atom/pagination";
 import { BorrowedBook } from "@/utils/types";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 
+interface DecodedToken {
+  id: string; 
+}
+
 const HistoryPage = () => {
-  const [books, setBooks] = useState<BorrowedBook[]>([]);
-  const userID = 1;
+  const [userID, setUserID] = useState<string | null>(null);
+  const [histories, setHistories] = useState<BorrowedBook[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded: DecodedToken = jwtDecode(token);
+        setUserID(decoded.id); 
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchBorrowedBooks = async () => {
+    if (!userID) return; 
+    const fetchHistoryBorrowedBooks = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/book/history/${userID}`);
+        const response = await fetch(`http://localhost:8080/book/history/${userID}?page=${currentPage}`);
         if (!response.ok) {
           throw new Error("Failed to fetch borrowed books");
         }
         const data = await response.json();
+        if (!data.history || !Array.isArray(data.history)) {
+          throw new Error("API response does not contain a books array");
+        }
         console.log(data);
-        setBooks(data);
+        setHistories(data.history);
+        setTotalPages(data.total_pages)
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchBorrowedBooks();
-  }, []);
-
-  // const handleReturn = async (bookID: number) => {
-  //   try {
-  //     const response = await fetch(`http://localhost:8080/book/return/${bookID}`, {
-  //       method: "POST",
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error("Failed to return book");
-  //     }
-  //     setBooks(books.map(book => 
-  //       book.book_id === bookID ? { ...book, status: "Returned" } : book
-  //     ));
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+    fetchHistoryBorrowedBooks();
+  }, [userID, currentPage]);
 
   return (
     <div className="container mx-auto p-6">
@@ -56,32 +65,37 @@ const HistoryPage = () => {
             </tr>
           </thead>
           <tbody>
-            {books.map((book) => (
-              <tr key={book.id} className="border-b">
+            {histories.map((history) => (
+              <tr key={history.id} className="border-b">
                 <td className="p-3 flex items-center">
                   <img 
-                    src={book.image.startsWith("http") ? book.image : `http://localhost:8080/${book.image.replace(/\\/g, "/")}`}
-                    alt={book.title} 
+                    src={history.image.startsWith("http") ? history.image : `http://localhost:8080/${history.image.replace(/\\/g, "/")}`}
+                    alt={history.title} 
                     className="w-12 h-12 mr-3 rounded-md object-cover" />
                   <div>
-                    <p className="font-semibold">{book.title}</p>
-                    <p className="text-sm text-gray-500">{book.author}</p>
+                    <p className="font-semibold">{history.title}</p>
+                    <p className="text-sm text-gray-500">{history.author}</p>
                   </div>
                 </td>
-                <td className="p-3">{book.category}</td>
+                <td className="p-3">{history.category}</td>
                 <td className="p-3">
-                  {book.borrow_date ? new Date(book.borrow_date).toLocaleDateString() : "N/A"}
+                  {history.borrow_date ? new Date(history.borrow_date).toLocaleDateString() : "N/A"}
                 </td>
                 <td className="p-3">
-                  {book.return_date ? new Date(book.return_date).toLocaleDateString() : "-"}
+                  {history.return_date ? new Date(history.return_date).toLocaleDateString() : "-"}
                 </td>
-                <td className={`p-3 ${book.status === "Borrowed" ? "text-red-900" : "text-green-900"}`}>
-                  {book.status}
+                <td className={`p-3 ${history.status === "Borrowed" ? "text-red-900" : "text-green-900"}`}>
+                  {history.status}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page: number) => setCurrentPage(page)}
+        />
       </div>
     </div>
   );

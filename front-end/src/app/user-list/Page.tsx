@@ -5,7 +5,7 @@ import { UserProps } from '@/utils/types';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 
-const Page = () => {
+const UserList = () => {
   const [users, setUsers] = useState<UserProps[]>([]);
   const userPerPage = 8
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,4 +99,4 @@ const Page = () => {
   )
 }
 
-export default Page
+export default UserList;
