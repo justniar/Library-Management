@@ -60,6 +60,11 @@ func (r *borrowingRepository) ReturnBook(userID, bookID int) error {
 	if rowsAffected == 0 {
 		return errors.New("no active borrowing record found")
 	}
+
+	_, err = r.DB.Exec(`UPDATE books SET stock = stock + 1 WHERE id=$1`, bookID)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

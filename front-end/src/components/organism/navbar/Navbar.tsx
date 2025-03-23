@@ -55,13 +55,13 @@ const Navbar: React.FC<NavbarProps> = () => {
           <div className="flex justify-center mt-4 space-x-4">
             <button
               onClick={handleLogout}
-              className="bg-red-900 text-white px-4 py-2 rounded-md hover:bg-red-950"
+              className="bg-red-900 text-white px-4 py-2 rounded-md hover:bg-red-950 cursor-pointer"
             >
               Yes, Logout
             </button>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
             >
               Cancel
             </button>
