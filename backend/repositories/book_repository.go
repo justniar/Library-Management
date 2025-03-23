@@ -16,29 +16,40 @@ func NewBookRepository(db *sql.DB) *BookRepository {
 	return &BookRepository{DB: db}
 }
 
-func (r *BookRepository) GetAllBooks() ([]models.Book, error) {
+func (r *BookRepository) GetAllBooks(limit, offset int) ([]models.Book, int, error) {
+	var books []models.Book
+	var totalCount int
+
+	countQuery := "SELECT COUNT(*) FROM books WHERE deleted_at IS NULL"
+	err := r.DB.QueryRow(countQuery).Scan(&totalCount)
+	if err != nil {
+		log.Println("Error fetching total book count:", err)
+		return nil, 0, err
+	}
+
 	query := `
 		SELECT id, title, author, category, stock, publisher, publication_year, pages, language, description, isbn, image, created_at, updated_at
-		FROM books WHERE deleted_at IS NULL`
-	rows, err := r.DB.Query(query)
+		FROM books WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+
+	rows, err := r.DB.Query(query, limit, offset)
 	if err != nil {
 		log.Println("Error fetching books:", err)
-		return nil, err
+		return nil, 0, err
 	}
+
 	defer rows.Close()
 
-	var books []models.Book
 	for rows.Next() {
 		var book models.Book
 		err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Category, &book.Stock, &book.Publisher, &book.PublicationYear, &book.Pages, &book.Language, &book.Description, &book.ISBN, &book.Image, &book.CreatedAt, &book.UpdatedAt)
 		if err != nil {
 			log.Println("Error scanning book:", err)
-			return nil, err
+			return nil, 0, err
 		}
 		books = append(books, book)
 	}
 
-	return books, nil
+	return books, totalCount, nil
 }
 
 func (r *BookRepository) GetBookDetails(bookID int) (*models.Book, error) {

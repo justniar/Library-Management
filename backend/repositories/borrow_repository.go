@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"backend/models"
 )
@@ -10,8 +11,8 @@ import (
 type BorrowingRepository interface {
 	BorrowBook(userID, bookID int) error
 	ReturnBook(userID, bookID int) error
-	GetBorrowingHistory(userID int) ([]models.BorrowHistory, error)
-	GetAllBorrowingHistory() ([]models.BorrowHistory, error)
+	GetBorrowingHistory(userID, limit, offset int) ([]models.BorrowHistory, int, error)
+	GetAllBorrowingHistory(limit, offset int) ([]models.BorrowHistory, int, error)
 }
 
 type borrowingRepository struct {
@@ -62,21 +63,30 @@ func (r *borrowingRepository) ReturnBook(userID, bookID int) error {
 	return nil
 }
 
-func (r *borrowingRepository) GetAllBorrowingHistory() ([]models.BorrowHistory, error) {
+func (r *borrowingRepository) GetAllBorrowingHistory(limit, offset int) ([]models.BorrowHistory, int, error) {
+	var history []models.BorrowHistory
+	var totalCount int
+	countQuery := "SELECT COUNT(*) FROM borrowing_history WHERE deleted_at IS NULL"
+	err := r.DB.QueryRow(countQuery).Scan(&totalCount)
+	if err != nil {
+		log.Println("Error fetching total history count:", err)
+		return nil, 0, err
+	}
+
 	query := `
 	SELECT bh.id, bh.user_id, bh.book_id, b.title, b.image, b.author, b.category, 
 	       bh.borrow_date, bh.return_date, bh.status, bh.created_at, bh.updated_at
 	FROM borrowing_history bh
 	JOIN books b ON bh.book_id = b.id
-	ORDER BY bh.borrow_date DESC`
+	ORDER BY bh.borrow_date DESC
+	LIMIT $1 OFFSET $2`
 
-	rows, err := r.DB.Query(query)
+	rows, err := r.DB.Query(query, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
-	var history []models.BorrowHistory
 	for rows.Next() {
 		var record models.BorrowHistory
 		err := rows.Scan(
@@ -86,28 +96,37 @@ func (r *borrowingRepository) GetAllBorrowingHistory() ([]models.BorrowHistory, 
 			&record.CreatedAt, &record.UpdatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		history = append(history, record)
 	}
-	return history, nil
+	return history, totalCount, nil
 }
 
-func (r *borrowingRepository) GetBorrowingHistory(userID int) ([]models.BorrowHistory, error) {
+func (r *borrowingRepository) GetBorrowingHistory(userID, limit, offset int) ([]models.BorrowHistory, int, error) {
+	var history []models.BorrowHistory
+	var totalCount int
+	countQuery := "SELECT COUNT(*) FROM borrowing_history WHERE user_id = $1 AND deleted_at IS NULL"
+	err := r.DB.QueryRow(countQuery, userID).Scan(&totalCount)
+	if err != nil {
+		log.Println("Error fetching total history count:", err)
+		return nil, 0, err
+	}
+
 	query := `
 	SELECT bh.id, bh.user_id, bh.book_id, b.title, b.image, b.author, b.category, 
 	       bh.borrow_date, bh.return_date, bh.status, bh.created_at, bh.updated_at
 	FROM borrowing_history bh
 	JOIN books b ON bh.book_id = b.id
-	WHERE bh.user_id = $1`
+	WHERE bh.user_id = $1
+	ORDER BY created_at DESC LIMIT $2 OFFSET $3`
 
-	rows, err := r.DB.Query(query, userID)
+	rows, err := r.DB.Query(query, userID, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
-	var history []models.BorrowHistory
 	for rows.Next() {
 		var record models.BorrowHistory
 		err := rows.Scan(
@@ -117,9 +136,12 @@ func (r *borrowingRepository) GetBorrowingHistory(userID int) ([]models.BorrowHi
 			&record.CreatedAt, &record.UpdatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		history = append(history, record)
 	}
-	return history, nil
+	if len(history) == 0 {
+		return []models.BorrowHistory{}, totalCount, nil
+	}
+	return history, totalCount, nil
 }

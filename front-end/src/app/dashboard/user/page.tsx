@@ -11,18 +11,15 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 8
-
+  const [totalPages, setTotalPages] = useState(1);
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/books`);
+        const response = await fetch(`http://localhost:8080/books?page=${currentPage}`);
         if (!response.ok) {
           throw new Error("Failed to fetch books");
         }
         const data = await response.json();
-        const sortedBooks = [...data.books].sort((a, b) => b.id - a.id);
-        setBooks(sortedBooks);
   
         console.log("Fetched data:", data);
   
@@ -30,7 +27,8 @@ export default function Home() {
           throw new Error("API response does not contain a books array");
         }
   
-        setBooks(sortedBooks); 
+        setBooks(data.books);
+        setTotalPages(data.total_pages)
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -39,13 +37,8 @@ export default function Home() {
     };
   
     fetchBooks();
-  }, []);  
+  }, [currentPage]);  
   
-
-  const startIndex = (currentPage - 1) * booksPerPage;
-  const endIndex = startIndex + booksPerPage;
-  const displayedBooks = books.slice(startIndex, endIndex);
-
   return (
       <div className="w-full flex flex-col z-0">
         <Hero/>
@@ -55,7 +48,7 @@ export default function Home() {
           ) : error ? (
             <p>{error}</p>
           ): (
-            displayedBooks.map((book)=>(
+            books.map((book)=>(
               <CardBook 
                 key={book.id}
                 id={book.id}
@@ -69,7 +62,7 @@ export default function Home() {
         </div>
         <Pagination 
           currentPage={currentPage}
-          totalPages={Math.ceil(books.length / booksPerPage)}
+          totalPages={totalPages}
           onPageChange={(page: number) => setCurrentPage(page)}
         />
       </div>

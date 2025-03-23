@@ -6,6 +6,7 @@ import (
 	"backend/utils/jwt"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -25,13 +26,28 @@ func NewBookHandler(bookService *service.BookService) *BookHandler {
 }
 
 func (h *BookHandler) GetAllBooks(c *gin.Context) {
-	books, err := h.BookService.GetAllBooks()
+
+	limit := 8
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+
+	if err != nil || page < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
+		return
+	}
+
+	offset := (page - 1) * limit
+	books, totalCount, err := h.BookService.GetAllBooks(limit, offset)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get books"})
 		return
 	}
+
+	totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
 	c.JSON(http.StatusOK, gin.H{
-		"books": books,
+		"books":        books,
+		"total_books":  totalCount,
+		"total_pages":  totalPages,
+		"current_page": page,
 	})
 }
 
