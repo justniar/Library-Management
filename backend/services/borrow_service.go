@@ -8,8 +8,8 @@ import (
 type BorrowingService interface {
 	BorrowBook(userID, bookID int) error
 	ReturnBook(userID, bookID int) error
-	GetBorrowingHistory(userID int) ([]models.BorrowHistory, error)
-	GetAllBorrowingHistory() ([]models.BorrowHistory, error)
+	GetBorrowingHistory(userID, limit, offset int) ([]models.BorrowHistory, int, error)
+	GetAllBorrowingHistory(limit, offset int) ([]models.BorrowHistory, int, error)
 }
 
 type borrowingService struct {
@@ -28,10 +28,10 @@ func (s *borrowingService) ReturnBook(userID, bookID int) error {
 	return s.BorrowingRepo.ReturnBook(userID, bookID)
 }
 
-func (s *borrowingService) GetAllBorrowingHistory() ([]models.BorrowHistory, error) {
-	return s.BorrowingRepo.GetAllBorrowingHistory()
+func (s *borrowingService) GetAllBorrowingHistory(limit, offset int) ([]models.BorrowHistory, int, error) {
+	return s.BorrowingRepo.GetAllBorrowingHistory(limit, offset)
 }
 
-func (s *borrowingService) GetBorrowingHistory(userID int) ([]models.BorrowHistory, error) {
-	return s.BorrowingRepo.GetBorrowingHistory(userID)
+func (s *borrowingService) GetBorrowingHistory(userID, limit, offset int) ([]models.BorrowHistory, int, error) {
+	return s.BorrowingRepo.GetBorrowingHistory(userID, limit, offset)
 }
