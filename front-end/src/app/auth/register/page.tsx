@@ -5,6 +5,7 @@ import pics from "@/assets/pic.jpg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RingLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -41,10 +42,10 @@ const RegisterPage = () => {
         throw new Error(errorData.message || "Registration failed");
       }
 
-      alert("Registration successful!");
+      toast.success("Registration successful!", { autoClose: 2000 });
       router.push("/auth/login");
     } catch (error: any) {
-      setError(error.message);
+      toast.error(error.message, { autoClose: 2000 });
     } finally {
       setLoading(false);
     }
@@ -118,14 +119,14 @@ const RegisterPage = () => {
               type="submit"
               className="w-full mt-6 bg-red-900 text-white py-2 rounded-md hover:bg-red-800"
             >
-              {/* {loading ? "Registering..." : "Register"} */}
-              {loading && (
+              Register
+            </button>
+          </form>
+          {loading && (
                 <div className="flex justify-center mt-4">
                   <RingLoader color="#9f0707" />
                 </div>
               )}
-            </button>
-          </form>
           <p className="text-center mt-4">
             Already have an account?{" "}
             <a href="/auth/login" className="text-red-900 hover:underline">
@@ -133,6 +134,8 @@ const RegisterPage = () => {
             </a>
           </p>
         </div>
+        <ToastContainer />
+
       </div>
     </div>
   );

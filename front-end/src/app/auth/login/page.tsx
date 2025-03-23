@@ -144,7 +144,6 @@ const LoginPage = () => {
         </div>
         <ToastContainer />
       </div>
-      <ToastContainer />
     </div>
   );
 };
