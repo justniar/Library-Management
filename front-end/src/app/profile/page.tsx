@@ -42,7 +42,7 @@ const Profile: React.FC = () => {
               {profile?.full_name} 
             </h1>
             <p className="text-gray-600 dark:text-gray-300">{profile?.username}</p>
-            <button className="mt-4 bg-red-900 text-white px-4 py-2 rounded-lg hover:bg-red-950 transition-colors duration-300">
+            <button className="mt-4 bg-red-900 text-white px-4 py-2 rounded-lg hover:bg-red-950 transition-colors duration-300 cursor-pointer">
               Edit Profile
             </button>
           </div>

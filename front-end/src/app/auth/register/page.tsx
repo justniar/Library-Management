@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RingLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
-import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 const RegisterPage = () => {
@@ -130,7 +129,7 @@ const RegisterPage = () => {
             </div>
             <button
               type="submit"
-              className="w-full mt-6 bg-red-900 text-white py-2 rounded-md hover:bg-red-800"
+              className="w-full mt-6 bg-red-900 text-white py-2 rounded-md hover:bg-red-800 cursor-pointer"
             >
               Register
             </button>

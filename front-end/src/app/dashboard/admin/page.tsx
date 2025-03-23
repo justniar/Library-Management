@@ -62,7 +62,6 @@ const AdminDashboard = () => {
   const fetchBooks = async () => {
     try {
       const response = await fetch(`http://localhost:8080/books?page=${currentPage}`);
-      if (!response.ok) throw new Error("Failed to fetch books");
       const data = await response.json();
       setBooks(data.books);
       setTotalPages(data.total_pages)
@@ -146,7 +145,7 @@ const AdminDashboard = () => {
       fetchBooks();
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to save book");
+      toast.error("Failed to save book");
     }
   };
   
@@ -165,16 +164,22 @@ const AdminDashboard = () => {
   
   const confirmDelete = async () => {
     if (!bookToDelete) return;
-  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token tidak ditemukan!");
+      return;
+    }
     try {
-      const response = await fetch(`http://localhost:8080/books/${bookToDelete.id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to delete book");
+      const response = await fetch(`http://localhost:8080/books/${bookToDelete.id}`, { 
+        method: "DELETE", headers: {
+        Authorization: `Bearer ${token}`, 
+      }, 
+    });
       toast.success("Buku berhasil dihapus!");
       setIsDeleteModalOpen(false);
       fetchBooks(); 
     } catch (error: any) {
-      setError(error.message);
-    }
+      toast.error(error.message, { autoClose: 2000 });    }
   };
 
   const handleClose = () => {
@@ -206,7 +211,7 @@ const AdminDashboard = () => {
         </div>
       )}
       {error && <p className="text-center text-red-900">{error}</p>}
-      <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4">Tambah Buku</button>
+      <button onClick={() => setIsModalOpen(true)} className="bg-red-900 text-white px-4 py-2 rounded-lg mb-4 cursor-pointer">Tambah Buku</button>
       <BookModal
           isOpen={isModalOpen}
           onClose={handleClose}
@@ -243,10 +248,10 @@ const AdminDashboard = () => {
                     <img src={book.image?.startsWith("http") ? book.image : `http://localhost:8080/${book.image?.replace(/\\/g, "/")}`} alt={book.title} className="w-16 h-16 object-cover mx-auto" />
                   </td>
                   <td className="p-3 text-center space-x-2 text-red-900 text-2xl">
-                    <button onClick={() => handleEdit(book)}>
+                    <button onClick={() => handleEdit(book)} className="cursor-pointer">
                       <MdEdit />
                     </button>
-                    <button onClick={()=>handleDelete(book)}>
+                    <button onClick={()=>handleDelete(book)} className="cursor-pointer">
                       <MdOutlineDeleteOutline />
                     </button>
                   </td>

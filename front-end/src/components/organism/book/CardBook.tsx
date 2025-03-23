@@ -63,7 +63,7 @@ const CardBook: React.FC<BookProps> = ({ id, image, title, author, stock }) => {
             onClick={handleBorrow}
             disabled={currentStock === 0}
             className={`mt-3 w-full px-4 py-2 text-white rounded-md ${
-              currentStock > 0 ? "bg-red-900 hover:bg-red-950" : "bg-gray-400 cursor-not-allowed"
+              currentStock > 0 ? "bg-red-900 hover:bg-red-950 cursor-pointer" : "bg-gray-400 cursor-not-allowed"
             }`}
           >
             {currentStock > 0 ? "Borrow" : "Out of Stock"}
