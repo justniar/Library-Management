@@ -4,13 +4,13 @@ import { AuthContext } from '@/context/AuthContext';
 import { UserProps } from '@/utils/types';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 
 const UserList = () => {
   const [users, setUsers] = useState<UserProps[]>([]);
   const userPerPage = 8
   const [currentPage, setCurrentPage] = useState(1);
-  const startIndex = (currentPage - 1) * userPerPage;
-  const endIndex = startIndex + userPerPage;
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter()
   const authContext = useContext(AuthContext);
     
@@ -33,7 +33,7 @@ const UserList = () => {
         if (!token) {
           throw new Error("Token tidak tersedia");
         }
-        const response = await fetch(`http://localhost:8080/users`, {
+        const response = await fetch(`http://localhost:8080/users?page=${currentPage}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -48,13 +48,14 @@ const UserList = () => {
         const data = await response.json();
         console.log(data);
         setUsers(data.users);
-      } catch (error) {
-        console.error(error);
+        setTotalPages(data.total_pages)
+      } catch (error: any) {
+        toast.error(error.message);
       }
     };
 
     fetchAllUsers();
-  }, []);
+  }, [currentPage]);
   
 
   return (
@@ -77,7 +78,7 @@ const UserList = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="border-b">
-                <td className="p-3">{user.user_id}</td>
+                <td className="p-3">{user.id}</td>
                 <td className="p-3">{user.username}</td>
                 <td className="p-3">{user.email}</td>
                 <td className="p-3">{user.role}</td>
@@ -93,7 +94,7 @@ const UserList = () => {
         </table>
         <Pagination
           currentPage={currentPage}
-          totalPages={Math.ceil(users.length / userPerPage)}
+          totalPages={totalPages}
           onPageChange={(page: number) => setCurrentPage(page)}
         />
       </div>

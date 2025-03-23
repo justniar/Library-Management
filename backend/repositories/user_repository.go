@@ -37,7 +37,17 @@ func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepository) GetAllUserss() ([]models.User, error) {
+func (r *UserRepository) GetAllUserss(limit, offset int) ([]models.User, int, error) {
+	var users []models.User
+	var totalCount int
+
+	countQuery := "SELECT COUNT(*) FROM users WHERE deleted_at IS NULL"
+	err := r.DB.QueryRow(countQuery).Scan(&totalCount)
+	if err != nil {
+		log.Println("Error fetching total book count:", err)
+		return nil, 0, err
+	}
+
 	query := `
 		SELECT 
 			u.id, COALESCE(ud.user_id, 0), u.username, u.email, u.role, 
@@ -45,26 +55,26 @@ func (r *UserRepository) GetAllUserss() ([]models.User, error) {
 			COALESCE(ud.genre, ''), COALESCE(ud.phone, ''), 
 			COALESCE(ud.address, ''), u.created_at, u.updated_at
 		FROM users u
-		LEFT JOIN user_details ud ON u.id = ud.user_id;
+		LEFT JOIN user_details ud ON u.id = ud.user_id
+		ORDER BY created_at DESC LIMIT $1 OFFSET $2;
 		`
-	rows, err := r.DB.Query(query)
+	rows, err := r.DB.Query(query, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
-	var users []models.User
 	for rows.Next() {
 		var user models.User
 		err := rows.Scan(&user.ID, &user.UserID, &user.Username, &user.Email, &user.Role, &user.FullName, &user.Aboutme, &user.Genre, &user.Phone, &user.Address, &user.CreatedAt, &user.UpdatedAt)
 		if err != nil {
 			log.Println("Error scanning user:", err)
-			return nil, err
+			return nil, 0, err
 		}
 		users = append(users, user)
 	}
 
-	return users, nil
+	return users, totalCount, nil
 }
 
 func (r *UserRepository) GetUserDetails(username string) (*models.User, error) {
